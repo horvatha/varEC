@@ -64,13 +64,13 @@ def possibilities(equations, protected_variables=None):
     for eq in equations:
         vars |= eq
     vars = sorted(vars)
-    possibilities = set()
+    possibilities = []
     number_of_free_variables = len(vars)-len(equations)
     assert len(protected_variables) <= number_of_free_variables, 'too many protected variables'
     for initial in itertools.combinations(vars, number_of_free_variables):
         initial = frozenset(initial)
         if protected_variables <= initial and len(calculatable(initial, equations, vars)) == len(vars):
-            possibilities.add(initial)
+            possibilities.append(initial)
     return possibilities
 
 def calculatable(initial, equations, vars):

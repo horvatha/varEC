@@ -37,7 +37,7 @@ class TestHelperFunctions(unittest.TestCase):
         ('d v0 t', (frozenset(['d','v0','t']),)),
     )
 
-    def test_equations_from_string(self):
+    def test_varsets_from_string(self):
         "varsets_from_string() should return proper values"
         for string, known_equations in self.varsets_from_string:
             self.assertEqual(varsets_from_string(string), known_equations)
@@ -50,6 +50,9 @@ class TestMakeEquations(unittest.TestCase):
         (['t=sqrt(2*125/g)', 'd=v0*t', 'v=sqrt(v0**2+(g*t)**2)', 'alpha=acos(v0/v)*180/pi', 'E=v*v'],
             set('v0 t d v alpha E'.split()),
             varsets_from_string('t,d v0 t,v v0 t,alpha v0 v,E v')),
+        (['h=g/2*t*t', 'd=v0*t', 'v=sqrt(v0**2+(g*t)**2)', 'alpha=acos(v0/v)*180/pi', 'Em=0.5*m*v*v'],
+            set('m v0 h t v d alpha Em'.split()),
+            varsets_from_string('h t,d v0 t,v v0 t,alpha v0 v,Em m v')),
     )
 
     def test_known_values(self):
@@ -79,7 +82,9 @@ class TestPossibilities(unittest.TestCase):
                 }
         self.possibilities = {
                 varsets_from_string('a b c,b c d,a b e,c f,d f g'):
-                varsets_from_string('a b,a c,a e,a f,c b,b d,b e,b f,c d,c g,d f,d g,g f')
+                varsets_from_string('a b,a c,a e,a f,c b,b d,b e,b f,c d,c g,d f,d g,g f'),
+                varsets_from_string('t h,t v v0,Em m v,alpha v0 v'):
+                varsets_from_string('m v alpha,h v m,Em alpha v0,Em alpha v,Em v0 t,Em h v,Em h m,v0 m v,Em v0 m,v0 m t,Em t v,Em h v0,m t v,v0 alpha m,v0 h m,Em v0 v,Em m t,Em alpha m'),
                 }
         self.possibilities_with_protected = {
                 varsets_from_string('a b c,b c d,a b e,c f,d f g'):
@@ -117,9 +122,9 @@ class TestPossibilities(unittest.TestCase):
         "possibilities() can be called with one argument"
         for equations in self.possibilities:
             possibilities_ = possibilities.possibilities(equations)
-            known_possibilities = set(possibilities_)
+            known_possibilities = set(self.possibilities[equations])
             #print(tuple(set(p) for p in possibilities_))
-            self.assertEqual(possibilities_, known_possibilities)
+            self.assertEqual(set(possibilities_), known_possibilities)
 
     def test_possibilities_with_protected(self):
         "possibilities() can be called with protected_variables"
@@ -129,7 +134,7 @@ class TestPossibilities(unittest.TestCase):
                 known_possibilities = set(known_possibilities)
                 possibilities_ = possibilities.possibilities(equations, protected_variables)
                 #print(tuple(set(p) for p in possibilities_))
-                self.assertEqual(possibilities_, known_possibilities)
+                self.assertEqual(set(possibilities_), known_possibilities)
 
     def test_too_many_protected(self):
         "possibilities() can be called with protected_variables"
