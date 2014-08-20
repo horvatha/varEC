@@ -57,10 +57,8 @@ def make_equations(formulas, variables):
         equations.append(variables_in_formula)
     return tuple(equations)
 
-def possibilities(equations, protected_variables=None):
-    vars = set()
-    if protected_variables is None:
-        protected_variables = frozenset()
+def possibilities(equations, vars, protected_variables=None):
+    vars = set(vars)
     for eq in equations:
         vars |= eq
     vars = sorted(vars)
