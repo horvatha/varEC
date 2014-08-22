@@ -12,9 +12,11 @@ import re
 
 __author__ = 'Arpad Horvath'
 
+
 # Used in unittest.
 def varsets_from_string(eqs):
     return tuple([frozenset(eq.split()) for eq in eqs.split(',')])
+
 
 def get_variables(formula):
     "Returns with the variables in the formula."
@@ -40,7 +42,8 @@ def get_variables(formula):
         if var1:
             var = var1.group(1)
             start, end = var1.span()
-            if var in set('eE') and start != 0 and remainder[start-1] in set('.0123456789'):
+            if var in set('eE') and start != 0 and \
+                    remainder[start-1] in set('.0123456789'):
                 pass
             elif var not in variables:
                 variables.add(var1.group(1))
@@ -48,6 +51,7 @@ def get_variables(formula):
         else:
             break
     return variables
+
 
 def make_equations(formulas, variables):
     """docstring for make_equations"""
@@ -57,30 +61,41 @@ def make_equations(formulas, variables):
         equations.append(variables_in_formula)
     return tuple(equations)
 
+
+# TODO We need vars parameter?
+# It needs if we have constants like e or pi or gamma?
+# The "vars" argument should be named "constants"
 def possibilities(equations, vars, protected_variables=None):
     vars = set(vars)
     for eq in equations:
         vars |= eq
     vars = sorted(vars)
+    if protected_variables is None:
+        protected_variables = frozenset()
     possibilities = []
     number_of_free_variables = len(vars)-len(equations)
-    assert len(protected_variables) <= number_of_free_variables, 'too many protected variables'
+    assert len(protected_variables) <= number_of_free_variables, \
+        'too many protected variables'
     for initial in itertools.combinations(vars, number_of_free_variables):
         initial = frozenset(initial)
-        if protected_variables <= initial and len(calculatable(initial, equations, vars)) == len(vars):
+        if protected_variables <= initial and \
+                len(calculatable(initial, equations, vars)) == len(vars):
             possibilities.append(initial)
     return possibilities
+
 
 def calculatable(initial, equations, vars):
     if isinstance(initial, str):
         initial = initial.split()
-    assert len(vars) - len(equations) == len(initial), 'wrong number of values in initial'
+    assert len(vars) - len(equations) == len(initial),\
+        'wrong number of values in initial'
     calculatable = set(initial)
     new_calc = True  # Just to enter the cycle
     while new_calc:
         new_calc = new_calculatable(calculatable, equations)
         calculatable |= new_calc
     return calculatable
+
 
 def new_calculatable(calculatable, equations):
     """docstring for new_calculatable"""
@@ -90,4 +105,3 @@ def new_calculatable(calculatable, equations):
         if len(diff) == 1:
             new_calculatable |= diff
     return new_calculatable
-

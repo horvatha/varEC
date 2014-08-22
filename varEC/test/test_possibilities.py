@@ -140,31 +140,31 @@ class TestPossibilities(unittest.TestCase):
 
     def test_possibilities_can_be_called_with_two_arguments(self):
         for equations in self.possibilities:
-            possibilities_ = possibilities.possibilities(equations)
             known_possibilities = set(self.possibilities[equations])
+            possibilities_ = possibilities.possibilities(equations, [])
             # print(tuple(set(p) for p in possibilities_))
             self.assertEqual(set(possibilities_), known_possibilities)
 
-    def test_possibilities_with_protected(self):
-        "possibilities() can be called with protected_variables"
+    def test_possibilities_can_called_with_protected_variables(self):
         for equations, protected in self.possibilities_with_protected.items():
             for protected_variables, known_possibilities in protected.items():
                 protected_variables = set(protected_variables)
                 known_possibilities = set(known_possibilities)
                 possibilities_ = possibilities.possibilities(
                     equations,
-                    protected_variables)
+                    [],
+                    protected_variables=protected_variables)
                 # print(tuple(set(p) for p in possibilities_))
                 self.assertEqual(set(possibilities_), known_possibilities)
 
-    def test_too_many_protected(self):
-        "possibilities() can be called with protected_variables"
+    def test_possibilities_raise_exeption_if_too_many_protected_variables(self):
         equations = varsets_from_string('a b c,b c d,a b e,c f,d f g')
         for protected_variables in [set(i)
                                     for i in 'abc def fegd acdeg'.split()]:
             self.assertRaises(AssertionError,
                               possibilities.possibilities,
                               equations,
+                              [],
                               protected_variables)
 
 
