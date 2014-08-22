@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 try:
     from setuptools import setup
 except ImportError:
@@ -10,7 +10,7 @@ if sys.version_info < (2, 6):
     print("This module requires Python >= 2.6")
     sys.exit(0)
 
-description="""
+description = """
 The cxnet extends IGraph module with some functionality
 I am using in higher education.
 Some functionality is available with NetworkX module as well.
@@ -29,31 +29,31 @@ Functionalities:
 """
 
 options = dict(
-    name = 'varEC',
-    version = '0.1',
-    description = 'Test paper variations maker using LaTeX',
-    long_description = description,
-    license = 'BSD License',
+    name='varEC',
+    version='0.1',
+    description='Test paper variations maker using LaTeX',
+    long_description=description,
+    license='BSD License',
 
-    author = 'Arpad Horvath',
-    author_email = 'horvath.arpad.szfvar@gmail.com',
-    url = 'http://django.arek.uni-obuda.hu/',
+    author='Arpad Horvath',
+    author_email='horvath.arpad.szfvar@gmail.com',
+    url='http://django.arek.uni-obuda.hu/',
 
-    packages = ['varEC' ],
-    #scripts = ['scripts/ec-sorter.py', 'scripts/ec-coder.py', 'scripts/ec-tryexercise.py'],
-    #test_suite = "igraph.test.suite",
+    packages=['varEC'],
+    test_suite="varEC.test.suite",
 
-    platforms = 'ALL',
-    keywords = ['LaTeX', 'education', 'mathematics', 'physics', 'higher education', 'quiz', 'test paper'],
-    classifiers = [
-      'Development Status :: 4 - Beta',
-      'Intended Audience :: Education',
-      'Operating System :: OS Independent',
-      'Programming Language :: Python',
-      'Topic :: Scientific/Engineering :: Mathematics',
-      'Topic :: Scientific/Engineering :: Physics',
-      'Topic :: Software Development :: Libraries :: Python Modules',
-      'License :: OSI Approved :: BSD License',
+    platforms='ALL',
+    keywords=['LaTeX', 'education', 'mathematics',
+              'physics', 'higher education', 'quiz', 'test paper'],
+    classifiers=[
+        'Development Status :: 4 - Beta',
+        'Intended Audience :: Education',
+        'Operating System :: OS Independent',
+        'Programming Language :: Python',
+        'Topic :: Scientific/Engineering :: Mathematics',
+        'Topic :: Scientific/Engineering :: Physics',
+        'Topic :: Software Development :: Libraries :: Python Modules',
+        'License :: OSI Approved :: BSD License',
     ]
 )
 
