@@ -86,7 +86,7 @@ class Environment:
 
     def __str__(self):
         if self.type == 'exercise':
-            return "Exercise %4s is the %3d-th in the %2d-th section from the row %4d." % \
+            return "Exercise %4s is the %3d-th in section %2d from the row %4d." % \
                 (self.code, self.num, self.section_number, self.begin.row)
         elif self.type == 'group':
             intv_num = len(self.exercises)
@@ -192,8 +192,8 @@ class ExerciseBook:
     def __init__(self,
                  file_name,
                  file_type='exercise series',
-                 text_loader=None,
-                 verbose=0):
+                 verbose=0,
+                 **kwargs):
         """  filenames: is a list of filenames or a filename in a string
         file_type is 'exercise series' or 'testpaper' """
 
@@ -204,11 +204,14 @@ class ExerciseBook:
         self.sections = []  # It can be sections or groups.
         self.groups = []  # It stores exercisegroup-environments
         self.verbose = verbose
-        # Gets lines
-        self.lines = self.file_loader()
+        text = kwargs.pop('text', [])
+        assert not kwargs
+        self.lines = self.text_loader(text)
         self.set()
 
-    def file_loader(self):
+    def text_loader(self, text):
+        if text:
+            return text
         try:
             if self.verbose > 1:
                 print('**eb "%s" \n in %s' % (self.file_name, self.texinput))
@@ -239,10 +242,10 @@ class ExerciseBook:
         beginp = re.compile(
             r"\\begin \s* \{\s*"+env['exercise']+r"\s*} \s* {(.*?)}",
             re.VERBOSE)
+        endp = re.compile(r"\\end\s*\{\s*"+env['exercise']+r"\s*}", re.VERBOSE)
 
         groupbeginp = re.compile(r"\\begin\s*\{\s*" + env['group'] + r"\s*}",
                                  re.VERBOSE)
-        endp = re.compile(r"\\end\s*\{\s*"+env['exercise']+r"\s*}", re.VERBOSE)
         groupendp = re.compile(
             r"\\end\s*\{\s*"+env['group']+r"\s*}", re.VERBOSE)
         # intervalp = re.compile(
@@ -343,7 +346,7 @@ class ExerciseBook:
 
     def bad_arguments_row_and_argument(self):
         return [(ex.begin.row, ex.code) for ex in self.exercises
-                if isinstance(ex.code, int)]
+                if not isinstance(ex.code, int)]
 
     def test(self):
         ex = self.exercises[1]
