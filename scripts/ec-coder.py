@@ -46,6 +46,7 @@ def not_integer(string):
     return 0
 
 
+# TODO Should use ExerciseBook.bad_arguments_row_and_argument()
 def new_codes(codelist=[],
               file=None,
               code_interval=code_interval,

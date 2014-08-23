@@ -314,7 +314,7 @@ def test_exercise_numbers():
             error('bad_arg', (file_name, row, argument))
     else:
         message('none')
-    print
+    print()
 
 
 #  Miscellaneous functions
