@@ -42,7 +42,7 @@ class IntegerList(list):
         if interval[0] == interval[1]:
             return "{interval[0]}".format(interval=interval)
         else:
-            return "{interval[0]}..{interval[0]}".format(interval=interval)
+            return "{interval[0]}..{interval[1]}".format(interval=interval)
 
 
 def uniq(ordered_list):
