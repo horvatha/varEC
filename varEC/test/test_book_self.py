@@ -1,5 +1,6 @@
 """Unittest of the Books and Exe"""
 import unittest
+import os
 from varEC import books
 
 
@@ -153,6 +154,7 @@ mint amit az alábbi automata felismer!
 """
 code_set = {54, 25, 13, 14, 15, 16, 53, 28, 29, 'sixtyone'}
 
+
 class TestExerciseBook(unittest.TestCase):
     """"""
 
@@ -182,16 +184,49 @@ class TestExerciseBook(unittest.TestCase):
             str(first_exercise),
             'Exercise   54 is the   1-th in section  1 from the row    2.')
 
-        groups = self.ExerciseBook.groups
-
     def test_definitions_function_get_definitions(self):
         self.assertEqual(self.ExerciseBook.definitions()[0],
                          '\\usepackage{tikz}\n')
 
     def test_can_list_bad_arguments(self):
-        print(self.ExerciseBook.bad_arguments_row_and_argument())
         self.assertEqual(self.ExerciseBook.bad_arguments_row_and_argument(),
                          [(121, 'sixtyone')])
+
+
+class TestFileFunctions(unittest.TestCase):
+    """Test name_with_path function."""
+
+    def setUp(self):
+        """Setup Tests"""
+        self.file_paths = ".. ../../scripts/ .".split()
+        self.old_directory = os.getcwd()
+        test_directory = os.path.dirname(__file__)
+        os.chdir(test_directory)
+
+    def tearDown(self):
+        os.chdir(self.old_directory)
+
+    def test_can_find_files(self):
+        known_values = (
+            ("ec-sorter.py", ["../../scripts/ec-sorter.py"]),
+            ("books.py", ["../books.py", "./books.py"]),
+            ("test_possibilities.py", ["./test_possibilities.py"]),
+            ("there_is_no_such_file.py", []),
+            ("test", []),  # It does not find directories.
+        )
+        for file_name, result in known_values:
+            self.assertEqual(
+                books.name_with_path(file_name, self.file_paths),
+                result
+            )
+
+    def test_read_file_lines(self):
+        known_values = (
+            ('there_is_no_such_file.py', []),
+            ('books.py', ['"""Just for testing"""\n']),
+        )
+        for file, result in known_values:
+            self.assertEqual(books.read_files_lines_or_empty_list(file), result)
 
 if __name__ == "__main__":
     unittest.main()

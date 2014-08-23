@@ -11,9 +11,8 @@ It is the part of the "ec" program group.
 class Books, ExerciseBook
   searches and stores exercises in an exercise-book or in a testpaper
 
-def name_with_path(file, directory_list=file_paths):
-     name_with_path(dirs, file) --> occurence_list
-  It searches for the file in 'dirs' directory list.
+def name_with_path(file, file_paths): --> occurence_list
+  It searches for the file in 'file_paths' directory list.
   It gives back all the 0 or more occurences in a list.
 
 """
@@ -26,18 +25,25 @@ import re
 import os
 
 
-def name_with_path(file, directory_list=file_paths):
-    """ name_with_path(file, dirs) --> occurence_list
-    It searches for the file in 'dirs' directory list.
+def name_with_path(file, directories):
+    """It searches for the file in a directory list.
     It gives back all the 0 or more occurences in a list.
     """
 
     list = []
-    for path in directory_list:
+    for path in directories:
         whole_name = os.path.join(path, file)
         if os.path.isfile(whole_name):
             list.append(whole_name)
     return list
+
+
+def read_files_lines_or_empty_list(file):
+    if not os.path.isfile(file):
+        return []
+    with open(file) as f:
+        lines = f.readlines()
+    return lines
 
 
 def _name_with_path_test(file):
@@ -117,9 +123,9 @@ class Books:
 
     def get_books(self):
         "Get the date of the books at initialization."
-        for filename in self.file_names:
+        for file_name in self.file_names:
             self.books.append(
-                ExerciseBook(filename, file_type=self.file_type,
+                ExerciseBook(file_name, file_type=self.file_type,
                              verbose=self.verbose - 1)
             )
 
@@ -198,7 +204,7 @@ class ExerciseBook:
         file_type is 'exercise series' or 'testpaper' """
 
         self.file_name = file_name
-        self.texinput = file_paths
+        self.file_paths = file_paths
         self.type = file_type
         self.exercises = []
         self.sections = []  # It can be sections or groups.
@@ -212,20 +218,8 @@ class ExerciseBook:
     def text_loader(self, text):
         if text:
             return text
-        try:
-            if self.verbose > 1:
-                print('**eb "%s" \n in %s' % (self.file_name, self.texinput))
-            file_name_with_path = \
-                name_with_path(self.file_name, self.texinput)[0]
-        except IndexError:
-            error('file not exists', self.file_name)
-            lines = []
-        else:
-            file = open(file_name_with_path, 'r')
-            if self.verbose >= 0:
-                message('file opened', file_name_with_path)
-            lines = file.readlines()
-            file.close()
+        whole_name = name_with_path(self.file_name, self.file_paths)[0]
+        lines = read_files_lines_or_empty_list(whole_name)
         return lines
 
     def __str__(self):
