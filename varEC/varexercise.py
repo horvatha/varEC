@@ -57,7 +57,8 @@ except ImportError:
     from .lang_en import dictionary
 
 # TODO Not a nice solution, we should get the wide from "bin/%s.py" % FILE_GROUP
-if FILE_GROUP in ["szamtudmat", "hiradastechnika", "informatika", "mat", "fizika"]:
+if FILE_GROUP in ["szamtudmat", "hiradastechnika",
+                  "informatika", "mat", "fizika"]:
     wide = True
 else:
     wide = False
@@ -71,15 +72,16 @@ interval_ = interval
 del interval
 
 import math
-from math import sin, cos, asin, acos, tan, atan, sqrt, log, log10, exp, sinh, cosh, tanh, pi
+from math import (sin, cos, asin, acos, tan, atan, sqrt, log, log10,
+                  exp, sinh, cosh, tanh, pi)
 # Trigonometrical functions. They calculate with degrees.
 # The name is same as the original, but ended with 'd'.
-def sind(x): sin(pi/180*x)
-def cosd(x): cos(pi/180*x)
-def tand(x): tan(pi/180*x)
-def asind(x): 180/pi*asin(x)
-def acosd(x): 180/pi*acos(x)
-def atand(x): 180/pi*atan(x)
+# def sind(x): sin(pi/180*x)
+# def cosd(x): cos(pi/180*x)
+# def tand(x): tan(pi/180*x)
+# def asind(x): 180/pi*asin(x)
+# def acosd(x): 180/pi*acos(x)
+# def atand(x): 180/pi*atan(x)
 # TODO Why don't work they correctly in exercises?
 
 
@@ -104,7 +106,7 @@ class Variations:
             file_names = [file_names]
         self.number_of_variations = number_of_variations
         self.books = Books(file_names, verbose=self.verbose - 1)
-        self.all_code_exists = 1
+        self.all_code_exists = True
         self.make_varexercises(number_of_variations)
         self.variable_list = None
 
@@ -114,13 +116,16 @@ class Variations:
         but varexercises replaces codes."""
 
         for group_number in range(len(self.varexercise_numbers)):
-            for item_number in range(1, len(self.varexercise_numbers[group_number])):
+            for item_number in range(
+                1,
+                len(self.varexercise_numbers[group_number])
+            ):
                 item = self.varexercise_numbers[group_number][item_number]
                 if isinstance(item, int):
                     code = item
                     if not self.books.code_container_books(code):
                         error('exercise missing', code)
-                        self.all_code_exists = 0
+                        self.all_code_exists = False
                     text = self.books.exercise_text(code)
                     vvar = VarExercise(text,
                                        code,
@@ -239,37 +244,17 @@ class Variations:
         return groups_text
 
 
-def _variation_test():
-    v = Variations([['A', 784, '\\newpage', 781, '\\newpage'], ['B', 785, 782]],
-                   'optika.tex',
-                   3)
-#     v = Variations([['A', 101, 102, '\\newpage'], ['B', 103, 104]],
-#                    'valszam.tex',
-#                    2)
-    print("1"*50)
-    print(print_text(v.one(1)))
-    print()
-    print("2"*50)
-    print(print_text(v.one(2)))
-    print()
-    print("3"*50)
-    print(print_text(v.one(3)))
-    print()
-    print("var "*12)
-    print(print_text(v.list()))
-
-
 def frame(text,
-          preamble_file = 'magyarpreambulum',
-          pagesize = 'a4paper',
-          fontsize = 11,
-          lhead = '-',
-          rhead = '-',
-          lfoot = '-',
-          rfoot = '-',
-          cfoot = None,
-          definitions = None,
-          doc_type = 'testpaper',
+          preamble_file='magyarpreambulum',
+          pagesize='a4paper',
+          fontsize=11,
+          lhead='-',
+          rhead='-',
+          lfoot='-',
+          rfoot='-',
+          cfoot=None,
+          definitions=None,
+          doc_type='testpaper',
           ):
 
     """ It will give the frame of the testpapers.
@@ -347,22 +332,6 @@ def frame(text,
     return general_frame(text,
                          class_argument='[%s, %dpt]' % (pagesize, fontsize),
                          preamble_text=preamble_text)
-
-
-def _frame_test():
-    v = Variations([['A', 784, 781, '\\newpage'], ['B', 785, 782]],
-                   'optika.tex',
-                   2)
-#     v = Variations([['A', 101, 102, '\\newpage'], ['B', 103, 104]],
-#                    'valszam.tex',
-#                    2)
-    print("1"*50)
-    print(v.one(1))
-    framed = frame(v.one(0))
-    file = open('temp.tex', "w")
-    file.writelines(framed)
-    file.close()
-    print('I wrote file "temp.tex".')
 
 
 def general_frame(text,
@@ -527,8 +496,10 @@ class VarExercise:
         if not self.is_interval() and not self.is_ecChoose():
             return
         if self.verbose > 1:
-            print("**ve interval_list=%s,\n**ve compute_list=%s,\n**ve ecChoose_list=%s" % \
-               (self.interval_list, self.compute_list, ecChoose_list))
+            print(
+                "**ve interval_list=%s,\n**ve compute_list=%s,"
+                "\n**ve ecChoose_list=%s" %
+                (self.interval_list, self.compute_list, ecChoose_list))
         self.uncomputable = 0
         if num:
             if self.is_interval():
@@ -677,13 +648,14 @@ class VarExercise:
         # Constants and functions
         # Mathematical constants
         # global pi
-        e = math.e; pi = math.pi
+        e = math.e
+        pi = math.pi
         drad = 180/pi
 
         # See sind, cosd ... functions at the beginning of the file.
         # They work correctly?
 
-        #Physical constants
+        # Physical constants
         g = 9.81        # Gravitational acceleration [m/s^2]
         c = 3e8         # Speed of Light [m/s]
         h = 6.6262e-34  # Planck [Js]
@@ -692,10 +664,8 @@ class VarExercise:
         NA = 6.0225e23  # Avogadro [1/mol]
         gamma = 6.67e11 # Gravitational Constant [Nm^2/kg^2]
         qe= 1.60219e-19 # Elementary charge [C] (e is not free unfortunately)
-        e0 = epsilon0 = 8.854187816e-12
-                # Permittivity of Vacuum [As/(Vm)]
-        mu0 = 4e-7*pi
-                # Permeability of Vacuum [Vs/(Am)]
+        e0 = epsilon0 = 8.854187816e-12 # Permittivity of Vacuum [As/(Vm)]
+        mu0 = 4e-7*pi # Permeability of Vacuum [Vs/(Am)]
         K = 9e9         # 1/(4*pi*epsilon0)  [Vm/(As)]
         me = 9.1095e-31 # The mass of electron [kg]
         mu= 1.66056e-27 # Atomic mass unit [kg]
@@ -1099,7 +1069,7 @@ def delete_remark(string):
     remark0p = re.compile(r''' ^ (\\\\)*   %  .*  ''',  re.VERBOSE)
     string = remark0p.sub('', string)
 
-    remarkp =re.compile(r'''
+    remarkp = re.compile(r'''
                    (?P<last>[^\\])  # the case % but not \%
                    (\\\\)*
                    %
@@ -1118,14 +1088,4 @@ def latextable_row(string_list):
 
 
 if __name__ == '__main__':
-    # _exercise_test(48, 'elektromagnesseg.tex', verbose = 3)
-    # _exercise_test(49, 'mechanika.tex', verbose = 3)
-    # _exercise_test(22, 'szilardsagtan.tex', verbose = 2)
-    # _exercise_test(404, 'hotan.tex', verbose = 2)
-    # _delete_remark_test()
-    # _frame_test()
-    _general_frame_test()
-    # _variation_test()
-    # _testpaper_frame_test()
-    # _latex_test()
-    # _VarExercise_test()
+    pass

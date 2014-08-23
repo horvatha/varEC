@@ -3,6 +3,7 @@
 
 import unittest
 import sys
+import os
 sys.path.append("/home/ha/ec/bin")
 
 from varEC.varexercise import delete_remark, latextable_row
@@ -54,7 +55,8 @@ class TestLatexNumber(unittest.TestCase):
 
 class TestLatexFrame(unittest.TestCase):
     def test_for_success(self):
-        text = ['This is a text.\n', 'Its second row. (árvíztűrő tükörírógép)\n']
+        text = ['This is a text.\n',
+                'Its second row. (árvíztűrő tükörírógép)\n']
         expected_result = ['\\documentclass[a4paper, 11pt]{article}\n', '\n',
                            '\\usepackage{amsmath}', '\\begin{document}\n',
                            '\n', 'This is a text.\n',
@@ -67,6 +69,30 @@ class TestLatexFrame(unittest.TestCase):
                                           preamble_text=r'\usepackage{amsmath}'
                                           )
             self.assertEqual(given_result, expected_result)
+
+
+# TODO Copy these files to test directory?
+class TestVariations(unittest.TestCase):
+    def setUp(self):
+        os.chdir('/home/ha/ec/')
+        Variations = varexercise.Variations
+        self.variations = [
+            Variations([['A', 82, 781, '\\newpage'],
+                        ['B', 785, 782]],
+                       'optika.tex',
+                       2),
+            Variations([['Gauss', 101, 102, '\\newpage'],
+                        ['Poisson', 103, 104]],
+                       'valszam.tex',
+                       2)
+        ]
+
+    def test_variation_can_be_framed_and_save(self):
+        for variation in self.variations:
+            framed = varexercise.frame(variation.one(1))
+            with open('temp.tex', "w") as f:
+                f.writelines(framed)
+            # TODO Should be checked, the files can be translated into pdf.
 
 
 if __name__ == "__main__":
