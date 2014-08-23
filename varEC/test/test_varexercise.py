@@ -52,5 +52,22 @@ class TestLatexNumber(unittest.TestCase):
             self.assertEqual(varexercise.latex_number(arg), result)
 
 
+class TestLatexFrame(unittest.TestCase):
+    def test_for_success(self):
+        text = ['This is a text.\n', 'Its second row. (árvíztűrő tükörírógép)\n']
+        expected_result = ['\\documentclass[a4paper, 11pt]{article}\n', '\n',
+                           '\\usepackage{amsmath}', '\\begin{document}\n',
+                           '\n', 'This is a text.\n',
+                           'Its second row. (árvíztűrő tükörírógép)\n',
+                           '\n', '\n\\end{document}\n']
+        for class_argument in ("[a4paper, 11pt]", ):
+            given_result = \
+                varexercise.general_frame(text,
+                                          class_argument=class_argument,
+                                          preamble_text=r'\usepackage{amsmath}'
+                                          )
+            self.assertEqual(given_result, expected_result)
+
+
 if __name__ == "__main__":
     unittest.main()

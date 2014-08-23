@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 from __future__ import print_function
@@ -19,8 +19,8 @@ from question_set_creator import latex_tools
 """
 # bug list at ec-sorter.py
 
-from lang import lang
-from ec_message import error, print_text
+from .lang import lang
+from .message import error, print_text
 from varEC import possibilities
 
 
@@ -46,15 +46,15 @@ class EcSyntaxError(Exception):
 in the row {0}.""".format(self.row)
 
 try:
-    exec('from setup_%s import decimal_point, times, FILE_GROUP' % lang)
+    exec('from .setup_%s import decimal_point, times, FILE_GROUP' % lang)
 except ImportError:
     print("I use english instead of %s." % lang)
-    from setup_hu import decimal_point, times, FILE_GROUP
+    from .setup_hu import decimal_point, times, FILE_GROUP
 try:
-    exec('from lang_%s import mesg, err, dictionary' % lang)
+    exec('from .lang_%s import mesg, err, dictionary' % lang)
 except ImportError:
     print("I use english instead of %s." % lang)
-    from lang_en import dictionary
+    from .lang_en import dictionary
 
 # TODO Not a nice solution, we should get the wide from "bin/%s.py" % FILE_GROUP
 if FILE_GROUP in ["szamtudmat", "hiradastechnika", "informatika", "mat", "fizika"]:
@@ -66,7 +66,7 @@ import re
 import random
 import itertools
 
-import interval
+from varEC import interval
 interval_ = interval
 del interval
 
@@ -83,7 +83,7 @@ def atand(x): 180/pi*atan(x)
 # TODO Why don't work they correctly in exercises?
 
 
-from books import Books, ExerciseBook
+from .books import Books, ExerciseBook
 
 
 class Variations:
@@ -391,18 +391,6 @@ def general_frame(text,
     return whole_text
 
 
-def _general_frame_test():
-    text = ['Itt van valami szöveg.\n', 'Ez a második sora.\n']
-    framed = general_frame(text,
-                           class_argument="[a4paper, 11pt]",
-                           preamble_file='magyarpreambulum'
-                           )
-    file = open('temp.tex', "w")
-    file.writelines(framed)
-    file.close()
-    print('I wrote file "temp.tex".')
-
-
 def _VarExercise_test():
     code = 5
     text = """
@@ -436,7 +424,7 @@ class VarExercise:
         self.unit_list = []   # In the order of variable_list.
         self.sorted_variable_list = []
         self.formulas = []
-        self.protected_variables = []  # It is not allowed to omit
+        self.protected_variables = []  # They are not allowed to omit
         # these variables. Protected with "!" in \interval
         # control sequence.
 
@@ -599,7 +587,7 @@ class VarExercise:
         self.make_variable_list()
         if self.is_interval():
             self.variaton_type = "interval"
-            self.make_formulas()
+            self.make_possibilities()
         elif self.is_ecChoose():
             self.variaton_type = "ecChoose"
 
@@ -657,7 +645,7 @@ class VarExercise:
             if self.verbose > 0:
                 print('**cw %s' % self.variable_list)
 
-    def make_formulas(self):
+    def make_possibilities(self):
         if not self.formulas:
             for compute in self.compute_list:
                 self.formulas.append(compute['formula'])
