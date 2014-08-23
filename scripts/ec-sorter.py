@@ -360,20 +360,6 @@ def translate(file):
     return new_files
 
 
-def name_list(name, file_paths=None):
-    ''' It creates all the possible whole names of the files with path.'''
-    name_list = [name]
-    for path in file_paths:
-        name = name_list[0]
-        if path[-1:] != '/':
-            path = path + '/'
-        name = path + name
-        name_list.append(name)
-    if options.verbose > 0:
-        print(' name_list = %s' % name_list)
-    return name_list
-
-
 def getcodes(exercise_numbers):
     """Returns with the ordered codes in the exercise_numbers."""
     codes = []
