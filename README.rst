@@ -1,9 +1,10 @@
 varEC
 ==========
 
-This is the repository of the varEC tespape maker program. The program was
-written in 2002 or so, but it is now under heavy reconstruction, so just the
-part of the program is in the repository.
+This is the repository of the varEC testpaper maker program. The program was
+written in 2002 or earlier, but it is now under heavy reconstruction, so
+just a (growing) part of the program is in the repository.
 
-The part of the program in the repository is Python 3 compatible.
+The whole program is Python 3 compatible. Python 2 compatibility will be
+dropped.
 
