@@ -154,11 +154,17 @@ def checksolution(file, lang=lang.lang):
                   "in the file {1} in row {2}".format(env, file, row+1))
 
 
+def places_of_code(books, code):
+    exercises = books.get_exercises(code)
+    for file_name, exercise in exercises:
+        print("\t{file_name} line {exercise.begin.row}".format(**locals()))
+
+
 def main():
     '''Makes new codes for the files in the input_files in a FILE_GROUP.
     input_files can be a file name or a file name list
     FILE_GROUP is constant at the beginning of this file.'''
-    print('FILE_GROUP="%s"' % FILE_GROUP)
+    print('Book Shelf="%s"' % FILE_GROUP)
     print('If it isn\'t good, '
           'set it in the bin/setup_hu.py file (at the beginning).')
     answer = input('May I continue? (Y/n) ')
@@ -173,11 +179,23 @@ def main():
     if isinstance(input_files, str):
         input_files = [input_files]
 
-    print('In this FILE_GROUP files are: %s' % ", ".join(input_files))
+    print('The files of this Book Shelf are: %s' % ", ".join(input_files))
 
     books = books.Books(input_files, verbose=-1)
     codelist = books.codelist()
-    print("Codelist:", integerlist.IntegerList(codelist))
+    print("There are {exercises} exercises "
+          "in the {books} Exercise Books of this Book Shelf."
+          .format(exercises=len(codelist), books=len(books.books)))
+    integer_codes = [c for c in codelist if isinstance(c, int)]
+    print("Code list:", integerlist.IntegerList(integer_codes))
+    not_unique_codes = integerlist.IntegerList(
+        integerlist.search_not_uniq(integer_codes).keys()
+    )
+    if not_unique_codes:
+        print("Not unique codes:", not_unique_codes)
+    for code in not_unique_codes:
+        print("I have found code {} here:".format(code))
+        places_of_code(books, code)
 
     for file in input_files:
         _whole_name = whole_name(file)

@@ -146,6 +146,17 @@ class Books:
                 list.append(book)
         return list
 
+    def get_exercises(self, code):
+        """Get the exercises of the codes to check
+        wheter there is multiple occurence."""
+        list = []
+        for exercise_book in self.books:
+            for i, c in enumerate(exercise_book.code_list):
+                if code is c:
+                    list.append((exercise_book.file_name,
+                                 exercise_book.exercises[i]))
+        return list
+
     def exercises_with_bad_arguments(self):
         """ Returns with a list of the tuple (filename, row, argument). """
         list = []
@@ -181,6 +192,7 @@ class ExerciseBook:
     def __init__(self,
                  file_name,
                  file_type='exercise series',
+                 text_loader=None,
                  verbose=0):
         """  filenames: is a list of filenames or a filename in a string
         file_type is 'exercise series' or 'testpaper' """
@@ -193,21 +205,25 @@ class ExerciseBook:
         self.groups = []  # It stores exercisegroup-environments
         self.verbose = verbose
         # Gets lines
-        self.lines = []
+        self.lines = self.file_loader()
+        self.set()
+
+    def file_loader(self):
         try:
             if self.verbose > 1:
-                print('**eb "%s" \n in %s' % (file_name, self.texinput))
-            _file_name = name_with_path(self.file_name, self.texinput)[0]
+                print('**eb "%s" \n in %s' % (self.file_name, self.texinput))
+            file_name_with_path = \
+                name_with_path(self.file_name, self.texinput)[0]
         except IndexError:
-            error('file not exists', file_name)
-            self.lines = []
+            error('file not exists', self.file_name)
+            lines = []
         else:
-            file = open(_file_name, 'r')
-            if verbose >= 0:
-                message('file opened', _file_name)
-            self.lines = file.readlines()
+            file = open(file_name_with_path, 'r')
+            if self.verbose >= 0:
+                message('file opened', file_name_with_path)
+            lines = file.readlines()
             file.close()
-        self.set()
+        return lines
 
     def __str__(self):
         str = ' Exercise book "%s"\n' % self.file_name
@@ -344,9 +360,10 @@ class ExerciseBook:
             return None
         exercise = self.exercises[self.code_list.index(code)]
         text = self.lines[exercise.begin.row-1:exercise.end.row-1]
-        return self.without_solution(text)
+        return text if solution else self.without_solution(text)
 
-    def without_solution(self, text):
+    @staticmethod
+    def without_solution(text):
         """ It will delete the solution-part of the exercise."""
         return text  # TODO
 
