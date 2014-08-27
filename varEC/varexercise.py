@@ -291,14 +291,6 @@ def frame(text,
 \pagestyle{fancy}
 """)
 
-    if lhead:
-        preamble_text.append("\\lhead{%s}\n" % lhead)
-    if rhead:
-        preamble_text.append("\\rhead{%s}\n" % rhead)
-    if lfoot:
-        preamble_text.append("\\lfoot{%s}\n" % lfoot)
-    if rfoot:
-        preamble_text.append("\\rfoot{%s}\n" % rfoot)
     if cfoot:
         preamble_text.append("\\cfoot{%s}\n" % cfoot)
     else:
@@ -322,6 +314,16 @@ def frame(text,
 % Itt esetleg állíthatod a többi logikai változót. (def_hu.tex)
 
 \input{commands_hu}''')
+
+    if lhead:
+        preamble_text.append("\\lhead{%s}\n" % lhead)
+    if rhead:
+        preamble_text.append("\\rhead{%s}\n" % rhead)
+    if lfoot:
+        preamble_text.append("\\lfoot{%s}\n" % lfoot)
+    if rfoot:
+        preamble_text.append("\\rfoot{%s}\n" % rfoot)
+
 
     if fontsize not in [10, 11, 12]:
         if type == 'list':
@@ -663,12 +665,12 @@ class VarExercise:
         R = 8.31441     # k*NA [J/(mol*kg)]
         NA = 6.0225e23  # Avogadro [1/mol]
         gamma = 6.67e11 # Gravitational Constant [Nm^2/kg^2]
-        qe= 1.60219e-19 # Elementary charge [C] (e is not free unfortunately)
+        qe = 1.60219e-19 # Elementary charge [C] (e is not free unfortunately)
         e0 = epsilon0 = 8.854187816e-12 # Permittivity of Vacuum [As/(Vm)]
         mu0 = 4e-7*pi # Permeability of Vacuum [Vs/(Am)]
         K = 9e9         # 1/(4*pi*epsilon0)  [Vm/(As)]
         me = 9.1095e-31 # The mass of electron [kg]
-        mu= 1.66056e-27 # Atomic mass unit [kg]
+        mu = 1.66056e-27 # Atomic mass unit [kg]
         sigma = 5.67e-8 # Stefan-Boltzmann Constant
 
         # For example there is a variable k, it is not equal to k (Planck const)
