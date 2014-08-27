@@ -11,19 +11,19 @@
 """
 
 #en[3] GROUP='physics'      # I will use bin/physics.py
-FILE_GROUP='villanytan'  # I will use bin/villanytan.py
-FILE_GROUP='villamos_energetika'
-FILE_GROUP='halozatok'
-FILE_GROUP='informatika'     # I will use bin/informatika.py
-FILE_GROUP='szamtudmat'      # I will use bin/szamtudmat.py
-FILE_GROUP='hiradastechnika'     # I will use bin/hiradastechnika.py
-FILE_GROUP='mat'     # I will use bin/mat.py
-FILE_GROUP='fizika'      # I will use bin/fizika.py
+FILE_GROUP = 'villanytan'  # I will use bin/villanytan.py
+FILE_GROUP = 'villamos_energetika'
+FILE_GROUP = 'halozatok'
+FILE_GROUP = 'informatika'     # I will use bin/informatika.py
+FILE_GROUP = 'hiradastechnika'     # I will use bin/hiradastechnika.py
+FILE_GROUP = 'mat'     # I will use bin/mat.py
+FILE_GROUP = 'szamtudmat'      # I will use bin/szamtudmat.py
+FILE_GROUP = 'fizika'      # I will use bin/fizika.py
 
-code_interval = (1,10000)
+code_interval = (1, 10000)
 
-##  It will be perhaps in an another file:
-##  'fesor_config.py'
+#  It will be perhaps in an another file:
+#  'fesor_config.py'
 
 
 import time
@@ -32,17 +32,17 @@ import time
 # filename in interactiv mode.
 #en file_paths = ['base','.','physics_en']
 file_paths = ['base', '.', 'matematika_hu', 'fizika_hu', 'physics_en',
-        'szamtudmat', 'hiradastechnika', 'informatika', 'halozatok',
-        'villamos_energetika',
-        ]
+              'szamtudmat', 'hiradastechnika', 'informatika', 'halozatok',
+              'villamos_energetika',
+              ]
 
 # Standard group names / Szokásos csoportnevek
-group_names='ABCDEFGHIJKLMNOPQRSTUVZ'
+group_names = 'ABCDEFGHIJKLMNOPQRSTUVZ'
 
 # Language (according to babel)/ Nyelv
 # It can be 'magyar' only at this time.
 # Perhaps it will be 'english', 'german', 'ngerman' ...
-babel_lang='magyar'
+babel_lang = 'magyar'
 
 # It will be at %s in r"\documentclass%s{article}"
 #en page = 'letter'
@@ -93,7 +93,7 @@ preamble_text_base = plus = r"""
 #en times = '\\times'
 times = '\cdot'
 #en decimal_point='.'
-decimal_point=','
+decimal_point = ','
 
 
 from varEC.datalist import DataList
@@ -110,11 +110,11 @@ files.append('output', 'A kimeneti fájl teljes neve', output_file)
 #en header_footer = DataList('Dates for header and footer')
 header_footer = DataList('A fej- és láblécbe kerülő adatok')
 #en header_footer.append('title', 'Title','Physics')  #Matematika dolgozat')
-header_footer.append('title', 'Cím',title)
+header_footer.append('title', 'Cím', title)
 #en header_footer.append('inst', 'Institution', 'XY TeXnical Scool')
 header_footer.append('inst', 'Az intézet neve', inst)
 #en header_footer.append('course','Course, grade','LaTeX (correspondence course)') #Villamosmérnök (nappali)')
-header_footer.append('course','Tagozat, szak, évfolyam',course)
+header_footer.append('course', 'Tagozat,  szak,  évfolyam', course)
 shift = 1  # Egy nap múlva (holnap)
 localtime = time.localtime(time.time() + shift*24*3600)
 #en[7] date_en = time.strftime("%d %m %Y", localtime) # English format
@@ -147,7 +147,10 @@ try:
 except NameError:
     format = 0
 #en make.append('format','The file format you need (it can be 0, dvi, ps, pdf, pdflatex)', format)
-make.append('format','A számodra szükséges fájlformátum (lehet tex, dvi, ps, pdf, pdflatex)', format)
+make.append('format',
+            'A számodra szükséges fájlformátum '
+            '(lehet tex, dvi, ps, pdf, pdflatex)',
+            format)
 
 #en variations = DataList('Variations')
 variations = DataList('Változatok')
