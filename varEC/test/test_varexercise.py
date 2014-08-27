@@ -114,11 +114,11 @@ texts = dict(
     A test gyorsulása a $t=\interval{6}{!t=1..12}$~s pillanatban
     \compute[$m/s^2$]{a=2*A - C*C*sin(C*t)}.
     """.splitlines(keepends=True),
-                      3, 1, 0,
-                      3,
-                      0,
-                      9,
-                      ),
+        3, 1, 0,
+        3,
+        0,
+        9,
+        ),
     text_acos=TextData(r"""
     Egy \interval[m]{53}{!h=40..121} magas toronyból, mely körül a terep sík,
     vízszintesen \interval[m/s]{5}{v0=5.1..20} sebességgel lőnek ki egy
@@ -129,11 +129,11 @@ texts = dict(
     képest.
     A becsapódáskor a mozgási energiája \compute[J]{E=0.5*m*v*v}.
     """.splitlines(keepends=True),
-                       3, 4, 0,
-                       1,
-                       0,
-                       5,
-                       )
+        3, 4, 0,
+        1,
+        0,
+        5,
+        )
 )
 
 
@@ -160,8 +160,9 @@ def test_first_compute_row(test_case, text_name):
     test_case.assertEqual(exercise.compute_list[0]['row'],
                           text_data.first_compute_row)
 
-
 import math
+
+
 class TestVarExercise(unittest.TestCase):
     def test_texts_have_proper_attributes(self):
         for text_name in texts:
@@ -171,19 +172,19 @@ class TestVarExercise(unittest.TestCase):
     def test_exercise_values(self):
         exercise, _ = get_exercise_and_text_data('text_acos')
         for values, erased_elements in exercise.list:
-            print(values)
-            print(erased_elements)
+            g = 9.81
             h = values.get('h')
             self.assertTrue(40 <= h <= 121)
             v0 = values.get('v0')
             m = values.get('m')
-            t = math.sqrt(2*h/9.81)
+            t = math.sqrt(2*h/g)
             self.assertAlmostEqual(values.get('t'), t)
+            v = math.sqrt(v0**2+(g*t)**2)
+            self.assertAlmostEqual(values.get('v'), v)
             alpha = math.acos(v0/v)*180/math.pi
             self.assertAlmostEqual(values.get('alpha'), alpha)
             E = 0.5*m*v*v
             self.assertAlmostEqual(values.get('E'), E)
-
 
 
 if __name__ == "__main__":
