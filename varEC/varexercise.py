@@ -22,6 +22,7 @@ from question_set_creator import latex_tools
 from .lang import lang
 from .message import error, print_text
 from varEC import possibilities
+from math import pi
 
 
 class LaTeXError(Exception):
@@ -71,9 +72,12 @@ from varEC import interval
 interval_ = interval
 del interval
 
-import math
+# TODO
+# import math
+function_import = """
 from math import (sin, cos, asin, acos, tan, atan, sqrt, log, log10,
                   exp, sinh, cosh, tanh, pi)
+"""
 # Trigonometrical functions. They calculate with degrees.
 # The name is same as the original, but ended with 'd'.
 # def sind(x): sin(pi/180*x)
@@ -645,42 +649,46 @@ class VarExercise:
         If there is some uncomputable formulas, it set self.computable = 1."""
         if self.verbose > 0:
             print('**ov VarExercise.one_variation() is running.')
+
         values = {}
+        globals_ = dict(
 
-        # Constants and functions
-        # Mathematical constants
-        # global pi
-        e = math.e
-        pi = math.pi
-        drad = 180/pi
+            # Constants and functions
+            # Mathematical constants
+            drad=180/pi,
 
-        # See sind, cosd ... functions at the beginning of the file.
-        # They work correctly?
+            # See sind, cosd ... functions at the beginning of the file.
+            # They work correctly?
 
-        # Physical constants
-        g = 9.81        # Gravitational acceleration [m/s^2]
-        c = 3e8         # Speed of Light [m/s]
-        h = 6.6262e-34  # Planck [Js]
-        k = 1.38e-23    # Boltzmann [J/K]
-        R = 8.31441     # k*NA [J/(mol*kg)]
-        NA = 6.0225e23  # Avogadro [1/mol]
-        gamma = 6.67e11 # Gravitational Constant [Nm^2/kg^2]
-        qe = 1.60219e-19 # Elementary charge [C] (e is not free unfortunately)
-        e0 = epsilon0 = 8.854187816e-12 # Permittivity of Vacuum [As/(Vm)]
-        mu0 = 4e-7*pi # Permeability of Vacuum [Vs/(Am)]
-        K = 9e9         # 1/(4*pi*epsilon0)  [Vm/(As)]
-        me = 9.1095e-31 # The mass of electron [kg]
-        mu = 1.66056e-27 # Atomic mass unit [kg]
-        sigma = 5.67e-8 # Stefan-Boltzmann Constant
+            # Physical constants
+            g=9.81,        # Gravitational acceleration [m/s^2]
+            c=3e8,         # Speed of Light [m/s]
+            h=6.6262e-34,  # Planck [Js]
+            k=1.38e-23,    # Boltzmann [J/K]
+            R=8.31441,     # k*NA [J/(mol*kg)]
+            NA=6.0225e23,  # Avogadro [1/mol]
+            gamma=6.67e11,  # Gravitational Constant [Nm^2/kg^2]num
+            qe=1.60219e-19,  # Elementary charge [C]
+            # (e is not free unfortunately)
+            e0=8.854187816e-12,  # Permittivity of Vacuum [As/(Vm)]
+            epsilon0=8.854187816e-12,  # Permittivity of Vacuum [As/(Vm)]
+            mu0=4e-7*pi,  # Permeability of Vacuum [Vs/(Am)]
+            K=9e9,  # 1/(4*pi*epsilon0)  [Vm/(As)]
+            me=9.1095e-31,  # The mass of electron [kg]
+            mu=1.66056e-27,  # Atomic mass unit [kg]
+            sigma=5.67e-8,  # Stefan-Boltzmann Constant
+        )
+        exec(function_import, globals_)
+        assert 'pi' in globals_
 
         # For example there is a variable k, it is not equal to k (Planck const)
         for variable in self.variable_list:
             if self.verbose > 1:
                 print('**ov %s = None' % variable)
-            exec('%s = None' % variable)
+            exec('%s = None' % variable, globals_, values)
 
         for const in self.const_list:
-            exec('%(name)s = %(value)g' % const)
+            exec('%(name)s = %(value)g' % const, values)
             if self.verbose > 1:
                 print('**ov Let %(name)s = %(value)g' % const)
 
@@ -688,21 +696,23 @@ class VarExercise:
             value, latex = interval_.random(intv['interval'])
             if intv['name']:
                 name = intv['name']
-                exec('%s = float(%g)' % (name, value))
-                exec('values["%s"] = float(%g)' % (name, value))
+                exec('%s = float(%g)' % (name, value), globals_, values)
+                # exec('values["%s"] = float(%g)' % (name, value))
+
         if self.verbose > 1:
             print('**ov values=float(%s)' % values)
 
         compute_list = self.compute_list[:]
         uncomputable = 0  # The number of the failed computation after
-                          # a successful computation.
+        # a successful computation.
 
         while compute_list:
             compute = compute_list[0]
             if self.verbose > 1:
                 print('**ov Formula: %s' % compute['formula'])
             try:
-                exec(compute['formula'])
+                exec(compute['formula'], globals_, values)
+
             except (NameError, TypeError):
                 if self.verbose > 0:
                     print('**ov  Not %s is computable yet.' % compute['name'])
@@ -723,10 +733,10 @@ class VarExercise:
 
             compute_list.pop(0)
             uncomputable = 0
-            command = 'values["%(name)s"] = %(right)s' % compute
+            command = '%(name)s = %(right)s' % compute
             if self.verbose > 2:
                 print("**ov command: ", command)
-            exec(command)
+            exec(command, globals_, values)
             if self.verbose > 2:
                 print('**ov values are= %s' % values)
 
