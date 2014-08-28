@@ -125,7 +125,7 @@ texts = dict(
     \interval[kg]{4}{m=2.01..5} tömegű ágyúgolyót.
     A golyó \compute[s]{t=sqrt(2*h/g)} múlva csapódik a földbe
     \compute[m/s]{v=sqrt(v0**2+(g*t)**2)} sebességgel,
-    \compute{alpha=acos(v0/v)*180/pi}~$^0$-os szög alatt a vízszinteshez
+    \compute{alpha=acosd(v0/v)}~$^0$-os szög alatt a vízszinteshez
     képest.
     A becsapódáskor a mozgási energiája \compute[J]{E=0.5*m*v*v}.
     """.splitlines(keepends=True),
@@ -171,6 +171,7 @@ class TestVarExercise(unittest.TestCase):
 
     def test_exercise_values(self):
         exercise, _ = get_exercise_and_text_data('text_acos')
+        self.assertGreater(len(exercise.list), 0)
         for values, erased_elements in exercise.list:
             g = 9.81
             h = values.get('h')

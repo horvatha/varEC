@@ -22,7 +22,27 @@ from question_set_creator import latex_tools
 from .lang import lang
 from .message import error, print_text
 from varEC import possibilities
+
+from .books import Books, ExerciseBook
+import re
+import random
+import itertools
+
+from varEC import interval
+interval_ = interval
+del interval
+
 from math import pi
+function_import = """
+from math import (sin, cos, asin, acos, tan, atan, sqrt, log, log10,
+                  exp, sinh, cosh, tanh, pi, e)
+sind = lambda  x: sin(pi/180*x)
+cosd = lambda  x: cos(pi/180*x)
+tand = lambda  x: tan(pi/180*x)
+asind = lambda x: 180/pi*asin(x)
+acosd = lambda x: 180/pi*acos(x)
+atand = lambda x: 180/pi*atan(x)
+"""
 
 
 class LaTeXError(Exception):
@@ -63,33 +83,6 @@ if FILE_GROUP in ["szamtudmat", "hiradastechnika",
     wide = True
 else:
     wide = False
-
-import re
-import random
-import itertools
-
-from varEC import interval
-interval_ = interval
-del interval
-
-# TODO
-# import math
-function_import = """
-from math import (sin, cos, asin, acos, tan, atan, sqrt, log, log10,
-                  exp, sinh, cosh, tanh, pi)
-"""
-# Trigonometrical functions. They calculate with degrees.
-# The name is same as the original, but ended with 'd'.
-# def sind(x): sin(pi/180*x)
-# def cosd(x): cos(pi/180*x)
-# def tand(x): tan(pi/180*x)
-# def asind(x): 180/pi*asin(x)
-# def acosd(x): 180/pi*acos(x)
-# def atand(x): 180/pi*atan(x)
-# TODO Why don't work they correctly in exercises?
-
-
-from .books import Books, ExerciseBook
 
 
 class Variations:
@@ -327,7 +320,6 @@ def frame(text,
         preamble_text.append("\\lfoot{%s}\n" % lfoot)
     if rfoot:
         preamble_text.append("\\rfoot{%s}\n" % rfoot)
-
 
     if fontsize not in [10, 11, 12]:
         if type == 'list':
@@ -650,7 +642,6 @@ class VarExercise:
         if self.verbose > 0:
             print('**ov VarExercise.one_variation() is running.')
 
-        values = {}
         globals_ = dict(
 
             # Constants and functions
@@ -679,7 +670,10 @@ class VarExercise:
             sigma=5.67e-8,  # Stefan-Boltzmann Constant
         )
         exec(function_import, globals_)
-        assert 'pi' in globals_
+        for i in ('pi', 'e', 'sin', 'sind', 'asin'):
+            assert i in globals_
+
+        values = {}
 
         # For example there is a variable k, it is not equal to k (Planck const)
         for variable in self.variable_list:
