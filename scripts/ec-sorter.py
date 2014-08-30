@@ -390,10 +390,10 @@ def make_testpapers():
 
     # It opens and reads the files
     global books
-    books = Books(files.input,
-                  file_type='exercise series',
-                  verbose=options.verbose - 1
-                  )
+    books = Books(
+        files.input,
+        file_type='exercise series'
+    )
 
     # It tests excercise numbers, writes the result,
     # and give back a list of (argument, row) pairs.
@@ -444,8 +444,7 @@ def make_testpapers():
     variation = varexercise.Variations(
         exercise_numbers,
         files.input,
-        number_of_variations,
-        verbose=options.verbose - 1
+        number_of_variations
     )
     if not variation.all_code_exists:
         error('codes missing')
@@ -483,13 +482,14 @@ def make_testpapers():
 
     if page in ['4a5', 'a5']:
         pagesize = 'a5paper'
-        listpagesize = solution_pagesize = 'a4paper'
+        solution_pagesize = 'a4paper'
     elif page == 'a4':
         pagesize = 'a4paper'
-        listpagesize = solution_pagesize = 'a4paper'
+        solution_pagesize = 'a4paper'
     else:
         pagesize = page
-        listpagesize = solution_pagesize = page
+        solution_pagesize = page
+    listpagesize = solution_pagesize
 
     solution_text = variation.one()
     solution_file = True  # It makes solution_file.
@@ -640,8 +640,7 @@ def _make_testpapers_test():
     v = varexercise.Variations(
         exercise_numbers,
         files.input,
-        number_of_variations,
-        verbose=1
+        number_of_variations
     )
     text = v.one(1)
     text = varexercise.frame(text)

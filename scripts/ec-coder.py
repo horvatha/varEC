@@ -182,7 +182,7 @@ def main():
 
     print('The files of this Book Shelf are: %s' % ", ".join(input_files))
 
-    books = books.Books(input_files, verbose=-1)
+    books = books.Books(input_files)
     codelist = books.codelist()
     print("There are {exercises} exercises "
           "in the {books} Exercise Books of this Book Shelf."

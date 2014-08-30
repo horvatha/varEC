@@ -23,7 +23,7 @@ from .lang import lang
 from .message import error, print_text
 from varEC import possibilities
 
-from .books import Books, ExerciseBook
+from .books import Books
 import re
 import random
 import itertools
@@ -92,17 +92,15 @@ class Variations:
     def __init__(self,
                  exercise_numbers,
                  file_names,
-                 number_of_variations,
-                 verbose=0
+                 number_of_variations
                  ):
 
         self.exercise_numbers = exercise_numbers[:]
-        self.verbose = verbose
         self.varexercise_numbers = exercise_numbers[:]
         if isinstance(file_names, str):
             file_names = [file_names]
         self.number_of_variations = number_of_variations
-        self.books = Books(file_names, verbose=self.verbose - 1)
+        self.books = Books(file_names)
         self.all_code_exists = True
         self.make_varexercises(number_of_variations)
         self.variable_list = None
@@ -358,19 +356,6 @@ def general_frame(text,
     return whole_text
 
 
-def _VarExercise_test():
-    code = 5
-    text = """
-Ha egy \interval[cm]{}{f=10..40} fókusztávolságú lencse elé
-\interval[cm]{}{t=50..100} távolságra helyezek el egy \interval[cm]{}{T=2..6}
-nagyságú tárgyat, akkor a \compute[cm]{K=T*(k/t)} nagyságú kép
-\compute[cm]{k=1/(1/f-1/t)} távolságra keletkezik a lencsétől.
-"""
-    var = VarExercise(text, code, num=3, verbose=3)
-    print(var)
-    print(var.latex_plain(2))
-
-
 class VarExercise:
     """ Makes, stores the values of a variation of an exercise.
     If there is some uncomputable formula, it returns with 1, else with 0.
@@ -381,9 +366,7 @@ class VarExercise:
     __str__() returns with the variations in a simple table.
     """
 
-    def __init__(self, text, code, num=None, verbose=0):
-        if verbose > 0:
-            print("** ve  VarExercise.__init__ is running.")
+    def __init__(self, text, code, num=None):
         self.list = []  # Stores (values, erased_elements) pairs
 
         # The variable list is in the order, you want to see in the tables
@@ -400,7 +383,6 @@ class VarExercise:
         self.text = text
         self.code = code
         self.num = num
-        self.verbose = verbose
 
         self.const_list = []
         self.interval_list = []
@@ -493,11 +475,6 @@ class VarExercise:
         self.find_control_words()
         if not self.is_interval() and not self.is_ecChoose():
             return
-        if self.verbose > 1:
-            print(
-                "**ve interval_list=%s,\n**ve compute_list=%s,"
-                "\n**ve ecChoose_list=%s" %
-                (self.interval_list, self.compute_list, ecChoose_list))
         self.uncomputable = 0
         if num:
             if self.is_interval():
@@ -509,14 +486,9 @@ class VarExercise:
         """ It searches for control words, and append them to the matching
         list and their names to the self.variable_list if it is empty."""
 
-        if self.verbose > 0:
-            print('**cw varexercise.find_control_words() is running')
-
         row_number = 0
         for row in self.text:
             row_number += 1
-            if self.verbose > 1:
-                print('\ncw ***** Row %d: "%s"' % (row_number, row[:-1]))
             row = delete_remark(row)
 
             element_types = {
@@ -592,8 +564,6 @@ class VarExercise:
             element['end'] = end + shift
 
             element_list.append(element)
-            if self.verbose > 0:
-                print('**cw {0}:\n {1}'.format(element_name, element))
 
             rest = rest[end:]
             shift += end
@@ -611,8 +581,6 @@ class VarExercise:
                     self.unit_list.append(interval['unit'])
             self.sorted_variable_list = self.variable_list[:]
             self.sorted_variable_list.sort()
-            if self.verbose > 0:
-                print('**cw %s' % self.variable_list)
 
     def make_possibilities(self):
         if not self.formulas:
@@ -639,8 +607,6 @@ class VarExercise:
         Just in the case if the values comes from \\intervals an \\compute.
         Stores them in self.list.
         If there is some uncomputable formulas, it set self.computable = 1."""
-        if self.verbose > 0:
-            print('**ov VarExercise.one_variation() is running.')
 
         globals_ = dict(
 
@@ -677,14 +643,10 @@ class VarExercise:
 
         # For example there is a variable k, it is not equal to k (Planck const)
         for variable in self.variable_list:
-            if self.verbose > 1:
-                print('**ov %s = None' % variable)
             exec('%s = None' % variable, globals_, values)
 
         for const in self.const_list:
             exec('%(name)s = %(value)g' % const, values)
-            if self.verbose > 1:
-                print('**ov Let %(name)s = %(value)g' % const)
 
         for intv in self.interval_list:
             value, latex = interval_.random(intv['interval'])
@@ -693,24 +655,16 @@ class VarExercise:
                 exec('%s = float(%g)' % (name, value), globals_, values)
                 # exec('values["%s"] = float(%g)' % (name, value))
 
-        if self.verbose > 1:
-            print('**ov values=float(%s)' % values)
-
         compute_list = self.compute_list[:]
         uncomputable = 0  # The number of the failed computation after
         # a successful computation.
 
         while compute_list:
             compute = compute_list[0]
-            if self.verbose > 1:
-                print('**ov Formula: %s' % compute['formula'])
             try:
                 exec(compute['formula'], globals_, values)
 
             except (NameError, TypeError):
-                if self.verbose > 0:
-                    print('**ov  Not %s is computable yet.' % compute['name'])
-
                 compute_list.append(compute_list.pop(0))
                 # It writes the first st the end
 
@@ -728,18 +682,10 @@ class VarExercise:
             compute_list.pop(0)
             uncomputable = 0
             command = '%(name)s = %(right)s' % compute
-            if self.verbose > 2:
-                print("**ov command: ", command)
             exec(command, globals_, values)
-            if self.verbose > 2:
-                print('**ov values are= %s' % values)
 
         possibilities = next(self.possibilities_cycle)
         erased_elements = set(self.variable_list) - possibilities
-        if self.verbose > 1:
-            print('**ov Values: %s' % values)
-        if self.verbose > 0:
-            print('**ov erased_elements: %s' % erased_elements)
         self.list.append((values, erased_elements))
 
     def vartext(self, num, full=0):
@@ -750,9 +696,7 @@ class VarExercise:
         If there is no interval in the text, it returns with the base_text.
 
         """
-        if self.verbose > 0:
-            print('**vt varexercise.vartext() is running.')
-        elif not self.is_interval() and not self.is_ecChoose():
+        if not self.is_interval() and not self.is_ecChoose():
             return self.text
         values, erased_elements = self.list[num]
         vtext = self.text[:]
@@ -764,8 +708,6 @@ class VarExercise:
             element['shift'] = 0
 
         for element in element_list:
-            if self.verbose-1 > 0:
-                print('vt Interval or compute: %s' % element)
             start = element['start'] + element['shift']
             end = element['end'] + element['shift']
             row = element['row']
@@ -816,8 +758,6 @@ class VarExercise:
 
         str = ""
         erased_elements = erased_elements or []
-        if self.verbose > 0:
-            print("**row values=%s" % values)
         for var in self.variable_list:
             if self.is_ecChoose:
                 str += "%9s  " % values[var]
@@ -914,10 +854,6 @@ class VarExercise:
     def latex_plain(self, num):
         """Returns with a plain latex format of the n-th variation,
         as latexrow (not in table format)."""
-        if self.verbose > 0:
-            print("** lp latex_plain is running.")
-        if self.verbose > 1:
-            print("*lp num=%d\n   self.list=%s" % (num, self.list))
         if not self.list:
             return ""
         values, erased_elements = self.list[num - 1]
@@ -959,14 +895,13 @@ class VarExercise:
         return rows
 
 
-def exercise_test(text, variation_number=5, verbose=1, with_latextable=0):
-    if verbose:
-        print()
-        print_text(text)
-        print()
+def exercise_test(text, variation_number=5, with_latextable=0):
+    print()
+    print_text(text)
+    print()
 
     code_number = 1001  # Bluff
-    ex = VarExercise(text, code_number, variation_number, verbose=verbose-1)
+    ex = VarExercise(text, code_number, variation_number)
 
     print(*ex.text, sep='')
     print(ex)
@@ -1007,48 +942,12 @@ def exercise_test(text, variation_number=5, verbose=1, with_latextable=0):
         print(*ex.latextable(), sep='')
 
 
-def _exercise_test(code_number, file_name=None, variation_number=5,
-                   verbose=1, with_latextable=0):
-    if verbose:
-        print('**et _exercise_test() running.')
-    file = ExerciseBook(file_name, file_type='testpaper', verbose=verbose - 1)
-    print("**et codes=%s" % file.code_list)
-    text = file.exercise_text(code_number)
-    if not text:
-        error("exercise missing", code_number)
-        return
-    if verbose and text:
-        print()
-        print_text(text)
-        print()
-
-    ex = VarExercise(text, code_number, variation_number, verbose=1)
-
-    if verbose:
-        print("**et ex='%s'" % ex)
-
-    if ex.vartext(0):
-        for line in ex.vartext(0):
-            print(line[:-1])
-    else:
-        print('Uncomputable formulas in the exercise.')
-        return 'uncomputable'
-
-    if with_latextable:
-        for i in range(1, variation_number + 1):
-            print(ex.latex_plain(i))
-
-
-def latex_number(value, verbose=-1):
+def latex_number(value):
     """ It converts a value to LaTeX format."""
 
-    if verbose > 0:
-        print('# latex value   = "%s"' % value)
     if isinstance(value, str):
         return value
     vstring = '%.4g' % value
-    if verbose > 0:
-        print('# latex vstring = "%s"' % vstring)
     if vstring.find('e+0') > -1:
         vstring = vstring.replace('e+0', times + '10^{') + '}'
     elif vstring.find('e-0') > -1:

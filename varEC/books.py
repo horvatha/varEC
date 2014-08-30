@@ -105,14 +105,12 @@ class Books:
     def __init__(self,
                  file_names,
                  file_type='exercise series',
-                 verbose=0
                  ):
         if isinstance(file_names, str):
             file_names = [file_names]
         self.file_names = file_names
         self.file_type = file_type
         self.books = []
-        self.verbose = verbose
         self.get_books()
 
     def __str__(self):
@@ -125,8 +123,7 @@ class Books:
         "Get the date of the books at initialization."
         for file_name in self.file_names:
             self.books.append(
-                ExerciseBook(file_name, file_type=self.file_type,
-                             verbose=self.verbose - 1)
+                ExerciseBook(file_name, file_type=self.file_type)
             )
 
     def exercise_text(self, code):
@@ -198,7 +195,6 @@ class ExerciseBook:
     def __init__(self,
                  file_name,
                  file_type='exercise series',
-                 verbose=0,
                  **kwargs):
         """  filenames: is a list of filenames or a filename in a string
         file_type is 'exercise series' or 'testpaper' """
@@ -209,7 +205,6 @@ class ExerciseBook:
         self.exercises = []
         self.sections = []  # It can be sections or groups.
         self.groups = []  # It stores exercisegroup-environments
-        self.verbose = verbose
         text = kwargs.pop('text', [])
         assert not kwargs
         self.lines = self.text_loader(text)
@@ -265,8 +260,6 @@ class ExerciseBook:
                 # It found a new section
                 section = sectionp.search(line)
                 if section:
-                    if self.verbose > 0:
-                        print('** new section or new group in row', row)
                     self.sections.append(section.group(1))
                     section_number = section_number + 1
                     exercise_number = 0
@@ -287,8 +280,6 @@ class ExerciseBook:
                         print()
                     if is_in_group:
                         group_env.exercises.append(exercise.code)
-                    if self.verbose > 0:
-                        print('** An exercise begins in row', row)
                     state = 'in exercise'
 
                 # It found the begin of an exercise-group environment
@@ -314,8 +305,6 @@ class ExerciseBook:
                 end = endp.search(line)
                 if end:  # start is the start column of the last interval
                                 # or None if there weren't any interval
-                    if self.verbose > 0:
-                        print('** end in row', row)
                     if start and start > end.start():
                         # 'start' is the start column of the last interval
                         # or None if there weren't any interval
