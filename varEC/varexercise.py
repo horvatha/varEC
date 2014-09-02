@@ -475,10 +475,10 @@ class VarExercise:
         self.find_control_words()
         if not self.is_interval() and not self.is_ecChoose():
             return
-        self.uncomputable = 0
+        self.is_computable = True
         if num:
             if self.is_interval():
-                self.variations()
+                self.make_variations()
             else:
                 self.choose_values()
 
@@ -596,7 +596,7 @@ class VarExercise:
         random.shuffle(shuffled_possibilities)
         self.possibilities_cycle = itertools.cycle(shuffled_possibilities)
 
-    def variations(self):
+    def make_variations(self):
         """Makes the variations."""
         for i in range(self.num):
             self.one_variation()
@@ -606,17 +606,10 @@ class VarExercise:
 
         Just in the case if the values comes from \\intervals an \\compute.
         Stores them in self.list.
-        If there is some uncomputable formulas, it set self.computable = 1."""
+        If there is some uncomputable formulas,
+        it set self.is_computable = False."""
 
         globals_ = dict(
-
-            # Constants and functions
-            # Mathematical constants
-            drad=180/pi,
-
-            # See sind, cosd ... functions at the beginning of the file.
-            # They work correctly?
-
             # Physical constants
             g=9.81,        # Gravitational acceleration [m/s^2]
             c=3e8,         # Speed of Light [m/s]
@@ -653,10 +646,10 @@ class VarExercise:
             if intv['name']:
                 name = intv['name']
                 exec('%s = float(%g)' % (name, value), globals_, values)
-                # exec('values["%s"] = float(%g)' % (name, value))
 
         compute_list = self.compute_list[:]
-        uncomputable = 0  # The number of the failed computation after
+        number_of_uncomputable_formulas = 0
+        # The number of the failed computation after
         # a successful computation.
 
         while compute_list:
@@ -668,10 +661,10 @@ class VarExercise:
                 compute_list.append(compute_list.pop(0))
                 # It writes the first st the end
 
-                uncomputable += 1
-                if uncomputable == len(compute_list):
+                number_of_uncomputable_formulas += 1
+                if number_of_uncomputable_formulas == len(compute_list):
                     error('uncomputable', self.code)
-                    self.uncomputable = 1
+                    self.is_computable = False
                     return
                 continue
             except ValueError:
@@ -680,7 +673,7 @@ class VarExercise:
                 return
 
             compute_list.pop(0)
-            uncomputable = 0
+            number_of_uncomputable_formulas = 0
             command = '%(name)s = %(right)s' % compute
             exec(command, globals_, values)
 
