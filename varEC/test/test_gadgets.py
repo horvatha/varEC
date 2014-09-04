@@ -26,16 +26,16 @@ class TestGetDate(unittest.TestCase):
                 gadgets.date_string(file_name)
 
 
-class TestGetLocaleMonthName(unittest.TestCase):
-    """Test get_locale_month_name() function"""
+class TestTomorrowTriple(unittest.TestCase):
+    """Test tomorrow_triple() function"""
 
-    def test_bad_values(self):
-        for args, kwargs in (
-            (("samu", "Testpaper"), {}),  # bad type_
-            (("samu",), {"type_": "Testpaper"}),  # bad type_
-        ):
-            with self.assertRaises(AssertionError):
-                gadgets.textin(*args, **kwargs)
+    def test_can_be_good(self):
+        date = year, month, day = gadgets.tomorrow_triple()
+        self.assertGreater(year, 2013)
+        self.assertTrue(0 < month < 13)
+        self.assertTrue(0 < day < 32)
+        for i in date:
+            self.assertIsInstance(i, int)
 
 
 class TestTextIn(unittest.TestCase):

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import locale
+import time
 
 month_name = ['', 'január', 'február', 'március', 'április',
               'május', 'június', 'július', 'augusztus',
@@ -15,15 +16,27 @@ def get_locale_month_name(month_num, locale_name=''):
 
 def date_string(string):
     """Egy 040312 kezdetű fájlból a "2004. március 12." sztringet hozza létre.
-Tipikus használata:
-date=date_string(output_file)
+    Tipikus használata:
+    date=date_string(output_file)
     """
     assert string[:6].isdigit()
     year, month, day = string[:2], int(string[2:4]), int(string[4:6])
-    assert month < 13
-    assert 0 < day <= month_length[month]
-    return '20%s. %s %d.' % (year, month_name[month], day)
+    assert is_date_valid(year, month, day), "must be a valid date"
+    return date_string_from_triple(year, month, day)
 
+
+def tomorrow_triple():
+    shift = 1
+    lt = time.localtime(time.time() + shift*24*3600)
+    return lt.tm_year, lt.tm_mon, lt.tm_mday
+
+
+def is_date_valid(year, month, day):
+    return month < 13 and 0 < day <= month_length[month]
+
+
+def date_string_from_triple(year, month, day):
+    return '20%s. %s %d.' % (year, month_name[month], day)
 
 TABLE_TEMPLATE = r'''\begin{tabular}[b]{%s}
 \hline
