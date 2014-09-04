@@ -96,7 +96,7 @@ class DataList:
     def __str__(self):
         string = self.text + ':\n'
         for abbr, text in self.list:
-            exec("value = self." + abbr)
+            value = eval("self." + abbr)
             if self.type in ('boolean',  'boolean row'):
                 if value in keys['yes']:
                     value = keys['yes'][0]
@@ -111,7 +111,7 @@ class DataList:
             cls()
             print(mesg['data'])
             print(self)
-            answer = string.lower(input(ask['change']))
+            answer = input(ask['change']).lower()
             if answer in keys['no'] or answer == '':
                 return
             self.query()
