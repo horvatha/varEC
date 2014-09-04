@@ -9,7 +9,6 @@ See the manual (it's only in Hungarian): manual/index.html
                 Options:
 
  Modes:
-             --interactive, -i    Interactive mode.
              --help, -h           Prints this text.
              --verbosity=NUM      The program will be more or less verbose.
                                   NUM can be -1, 0, 1, 2.
@@ -83,7 +82,6 @@ Nézd meg a bővebb leírást: manual/index.html
 opciók:
 
 Módok:
-        --interactive, -i     Az adatokat interaktív módon megkérdezi.
         --4a5             A5-ös formátumot csinál,
                         és négyesével egy A4-es papírra helyezi.
                         (Papírtakarékos.
@@ -192,7 +190,6 @@ MYDIR = os.path.abspath(sys.path[0])
 
 
 class Options:
-    interactive = 0
     verbose = 0
     help = 0
     variation = 0
@@ -200,18 +197,15 @@ class Options:
 
     def parse(self, args0):
         opts, args = getopt.getopt(args0,
-                                   "avhHo:ip:",
-                                   ["interactive", "verbose", "verbosity=",
+                                   "avhHo:p:",
+                                   ["verbose", "verbosity=",
                                     "help", "output=",
                                     "format=", "view=",
                                     "var=", "print="])
 
         for opt, arg in opts:
             # Modes
-            if opt in ['-i', '--interactive']:
-                self.interactive = 1
-                self.verbose = -1
-            elif opt in ['-v', '--verbose']:
+            if opt in ['-v', '--verbose']:
                 self.verbose = 1
             elif opt == '--verbosity':
                 self.verbose = int(arg)
@@ -245,48 +239,6 @@ class Options:
 
 #  Functions for write exercises
 ###########################
-
-def ask_exercises(codelist):
-    """ If you have not exercise numbers in the list
-        exercise_numbers it asks for them.
-    """
-    print("Codelist = %s" % codelist)
-
-    exercise_numbers = []
-    group = ''
-    i = 1
-    while True:
-        group = raw_input(ask('group', (i, group_names[i - 1])))
-        if group.lower() in ['kk', 'qq']:
-            print
-            break
-        if group == '':
-            group = group_names[i - 1]
-        i = i + 1
-        list = [group]
-        message('group name', group)
-
-        # It asks the numbers in one group.
-        j = 1
-        while 1:
-            num_string = raw_input(ask('exercise', j))
-            if num_string == '':
-                break
-            try:
-                num = int(num_string)
-            except ValueError:
-                error('bad_value')
-                continue
-            if num not in codelist:
-                error('bad_value')
-                continue
-            list.append(num)
-            j = j + 1
-
-        message('group', (group, repr(list[1:])))
-        exercise_numbers.append(list)
-    return exercise_numbers
-
 
 def test_exercise_numbers():
     """ It writes the intervals and the not uniq numbers. """
@@ -323,8 +275,8 @@ def test_exercise_numbers():
 
 def translate(file):
     """It makes the given translations.
-      Returns with the names of the generated files.
-      Used by interactive and automatic mode too."""
+    Returns with the names of the generated files.
+    """
 
     new_files = []
     filename = file.name
@@ -381,13 +333,6 @@ def get_ordered_codes(exercise_numbers):
 
 def make_testpapers():
 
-    if options.interactive:
-        message('group name', FILE_GROUP)
-        files.setup()
-        cls()
-    if not files.input:
-        files.input = input(ask('file'))
-
     # It opens and reads the files
     global books
     books = Books(
@@ -395,44 +340,8 @@ def make_testpapers():
         file_type='exercise series'
     )
 
-    # It tests excercise numbers, writes the result,
-    # and give back a list of (argument, row) pairs.
-    if options.interactive and ask_exit('test'):
-        return
-
-    if options.interactive:
-        test_exercise_numbers()
-
-    if options.interactive and ask_exit('exercises and datas in'):
-        return
-
-    # It asks exercises numbers if there's no
-    # default value.
-    answer = keys['no'][0]
-    if not options.interactive and exercise_numbers:
-        answer = keys['yes'][0]
-    if exercise_numbers and options.interactive:
-        message('found exercise_numbers')
-        for group in exercise_numbers:
-            for item in group[1:]:
-                try:
-                    txt = int(item)
-                except ValueError:
-                    txt = "%70s" % item
-                print(txt)
-
-        answer = raw_input(ask('use exercise_numbers'))
-
-    if answer in keys['no']:
-        exercise_numbers = ask_exercises(books.codelist())
     codes = get_ordered_codes(exercise_numbers)
 
-    if options.interactive:
-        header_footer.setup()
-        cls()
-
-    if options.interactive:
-        variations.setup()
     try:
         number_of_variations = int(variations.num)
     except ValueError:
@@ -568,11 +477,6 @@ def make_testpapers():
 
     other_output_files = OutputFiles()  # Non-tex files.
     global make
-    if options.interactive:
-        print
-        message('format')
-        make.setup()
-        cls()
     if make.format == '0':
         make.format = 0
     if output_tex_files.list and make.format:
@@ -583,53 +487,6 @@ def make_testpapers():
 
     print('\n')
     message('wrote files', "%s%s" % (output_tex_files, other_output_files))
-    # message('with solution')
-
-    data = {
-        'canbe': 'It can be:',
-        'output_file': files.output,
-
-        'course': header_footer.course,
-        'inst': header_footer.inst,
-        'title': header_footer.title,
-        'date': header_footer.date,
-
-        'exercise_numbers': exercise_numbers,
-        'var': variations.num,
-        'format': format,
-        'page': page,
-        'fontsize': fontsize
-    }
-    if lang == 'hu':
-        data['canbe'] = 'Lehet:'
-
-    text = """###########################
-# Generated by the ec-sorter.py program
-
-output_tex_files="%(output_file)s"
-
-course = '%(course)s'
-inst = '%(inst)s'
-title= '%(title)s'
-date = '%(date)s'
-
-exercise_numbers=%(exercise_numbers)s
-
-# %(canbe)s 0, 1, 2...,  -1
-var=%(var)s
-
-# %(canbe)s pdf, ps , dvi, tex, pdflatex
-format='%(format)s'
-
-# %(canbe)s letter, a4paper, a5paper...,  4a5
-page='%(page)s'
-# 10, 11, 12
-fontsize=%(fontsize)d
-""" % data
-    f = open('variables.py', 'a')
-    f.writelines([text])
-    f.close()
-
 
 def _make_testpapers_test():
     """ It tests varexercise.Variations."""
@@ -681,8 +538,6 @@ def _group_test():
 
 
 main()
-# make_testpapers(1, 'dolgozat.tex')
-# _group_test()
 
 
 bugs = """
