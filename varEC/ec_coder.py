@@ -78,7 +78,6 @@ def new_codes(codelist=[],
                 # if there is nothing after the code number
                 newpattern = r'\g<1>%d}\n'
             change += 1  # One more changes
-            # print(codelist)
             while code in codelist:
                 code += 1
                 if code >= code_interval[1]:
@@ -93,14 +92,6 @@ def new_codes(codelist=[],
         else:
             new_lines.append(line)
 
-# print('be')
-# for i in lines:
-#     print(i)
-
-# print('Ki')
-# for line in  nlines:
-#     print(line)
-
     if change == 0:
         print('\tThere wasn\'t any changes in this file.')
         return codelist
@@ -110,7 +101,6 @@ def new_codes(codelist=[],
         archive_file = os.path.join(path, 'old_' + basename)
     print('\tThere was %d changes in this file.' % change)
 
-    # print(file, archive_file)
     if os.path.islink(file):
         shutil.copyfile(file, archive_file)
         path, basename = os.path.split(file)
@@ -207,6 +197,3 @@ def main():
             print("There is not file named %s." % file)
 
         checksolution(_whole_name)
-
-if __name__ == '__main__':
-    main()

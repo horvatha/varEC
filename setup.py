@@ -43,7 +43,11 @@ options = dict(
     test_suite="varEC.test.suite",
 
     entry_points={
-        'console_scripts': ['ec-sorter = varEC.ec_sorter:main']
+        'console_scripts': [
+            'ec-sorter = varEC.ec_sorter:main',
+            'ec-coder = varEC.ec_coder:main',
+            # 'ec-tryexercise = varEC.ec_tryexercise:main',
+        ]
     },
 
     platforms='ALL',
