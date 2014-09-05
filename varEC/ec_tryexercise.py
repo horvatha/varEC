@@ -21,11 +21,14 @@ def get_group():
         return sys.argv[1]
 
 
-code = int(sys.argv[-1])
-group = get_group()
-exec('from varEC.%s import input_files' % group)
-print('input files:\n  ', end='')
-print(*input_files, sep='\n  ', end='\n\n')
-books = Books(input_files)
-text = books.exercise_text(code)
-exercise_test(text, variation_number=6, with_latextable=1)
+def main():
+    code = int(sys.argv[-1])
+    group = get_group()
+    locals_ = {}
+    exec('from varEC.%s import input_files' % group, globals(), locals_)
+    input_files = locals_['input_files']
+    print('input files:\n  ', end='')
+    print(*input_files, sep='\n  ', end='\n\n')
+    books = Books(input_files)
+    text = books.exercise_text(code)
+    exercise_test(text, variation_number=6, with_latextable=1)

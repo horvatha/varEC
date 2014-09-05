@@ -46,7 +46,7 @@ options = dict(
         'console_scripts': [
             'ec-sorter = varEC.ec_sorter:main',
             'ec-coder = varEC.ec_coder:main',
-            # 'ec-tryexercise = varEC.ec_tryexercise:main',
+            'ec-tryexercise = varEC.ec_tryexercise:main',
         ]
     },
 

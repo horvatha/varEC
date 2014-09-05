@@ -198,7 +198,7 @@ class TestFileFunctions(unittest.TestCase):
 
     def setUp(self):
         """Setup Tests"""
-        self.file_paths = ".. ../../scripts/ .".split()
+        self.file_paths = ".. files/ .".split()
         self.old_directory = os.getcwd()
         test_directory = os.path.dirname(__file__)
         os.chdir(test_directory)
@@ -208,8 +208,8 @@ class TestFileFunctions(unittest.TestCase):
 
     def test_can_find_files(self):
         known_values = (
-            ("ec-sorter.py", ["../../scripts/ec-sorter.py"]),
-            ("books.py", ["../books.py", "./books.py"]),
+            ("ec_sorter.py", ["../ec_sorter.py"]),
+            ("books.py", ["../books.py", "files/books.py"]),
             ("test_possibilities.py", ["./test_possibilities.py"]),
             ("there_is_no_such_file.py", []),
             ("test", []),  # It does not find directories.
@@ -223,7 +223,7 @@ class TestFileFunctions(unittest.TestCase):
     def test_read_file_lines(self):
         known_values = (
             ('there_is_no_such_file.py', []),
-            ('books.py', ['"""Just for testing"""\n']),
+            ('files/books.py', ['"""Just for testing"""\n']),
         )
         for file, result in known_values:
             self.assertEqual(books.read_files_lines_or_empty_list(file), result)
