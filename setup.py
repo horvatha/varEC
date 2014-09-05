@@ -42,6 +42,10 @@ options = dict(
     packages=['varEC'],
     test_suite="varEC.test.suite",
 
+    entry_points={
+        'console_scripts': ['ec-sorter = varEC.ec_sorter:main']
+    },
+
     platforms='ALL',
     keywords=['LaTeX', 'education', 'mathematics',
               'physics', 'higher education', 'quiz', 'test paper'],
