@@ -1,4 +1,4 @@
-"""Unittest of the Books and Exe"""
+"""Unittest of the Books and ExerciseBook"""
 import unittest
 import os
 from varEC import books
@@ -27,7 +27,10 @@ Részletezze a Chomsky-féle nyelvtan-osztályokat!
 \subsection{Reguláris nyelvek, véges automaták}
 
 \begin{feladat}{25}
-Felismeri-e az alábbi determinisztikus véges automata az üres szót és az 110011, 101 szavakat? Határozzuk meg, melyik nyelvet ismeri fel az alábbi determinisztikus véges automata! A választ saját szavainkkal és halmazjelöléssel is írjuk fel!
+Felismeri-e az alábbi determinisztikus véges automata
+az üres szót és az 110011, 101 szavakat?
+Határozzuk meg, melyik nyelvet ismeri fel az alábbi determinisztikus véges
+automata! A választ saját szavainkkal és halmazjelöléssel is írjuk fel!
 Milyen típusú nyelv ez?
 
 \tikzset{
@@ -51,7 +54,8 @@ Milyen típusú nyelv ez?
 \begin{feladat}{13}
 Jelölje G a következő nyelvtant
 $$G=(\{0;1;2\};  \{S\}; S; \{S\rightarrow0SAC; S\rightarrow01C;
-CA\rightarrow BA; BA\rightarrow BC; BC\rightarrow AC; 1A\rightarrow  11; C\rightarrow 2 \})$$
+CA\rightarrow BA; BA\rightarrow BC; BC\rightarrow AC; 1A\rightarrow  11;
+C\rightarrow 2 \})$$
 \begin{enumerate}
 \item G nyelvtanban vezessük le $001222$ és $001122$ közül, amelyik levezehető!
 \item Határozzuk meg ${\cal L}(G)$ nyelvet!
