@@ -194,7 +194,7 @@ class TestExerciseBook(unittest.TestCase):
 
     def test_can_list_bad_arguments(self):
         self.assertEqual(self.ExerciseBook.bad_arguments_row_and_argument(),
-                         [(121, 'sixtyone')])
+                         [(125, 'sixtyone')])
 
 
 class TestFileFunctions(unittest.TestCase):

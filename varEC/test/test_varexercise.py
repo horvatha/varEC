@@ -6,6 +6,7 @@ import sys
 import os
 sys.path.append("/home/ha/ec/bin")
 import collections
+import math
 
 from varEC.varexercise import delete_remark, latextable_row
 from varEC import varexercise
@@ -159,8 +160,6 @@ def test_first_compute_row(test_case, text_name):
     exercise, text_data = get_exercise_and_text_data(text_name)
     test_case.assertEqual(exercise.compute_list[0]['row'],
                           text_data.first_compute_row)
-
-import math
 
 
 class TestVarExercise(unittest.TestCase):

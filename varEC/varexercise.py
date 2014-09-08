@@ -569,7 +569,8 @@ class VarExercise:
             shift += end
 
     def is_ecChoose(self):
-        """Returns with the logical value of 'there is ecChoose(es) in the exercise'."""
+        """Returns with the logical value of
+                  'there is ecChoose(es) in the exercise'."""
         return len(self.ecChoose_list) > 0
 
     def make_variable_list(self):
@@ -642,7 +643,7 @@ class VarExercise:
             exec('%(name)s = %(value)g' % const, values)
 
         for intv in self.interval_list:
-            value, latex = interval_.random(intv['interval'])
+            value = interval_.random(intv['interval'])
             if intv['name']:
                 name = intv['name']
                 exec('%s = float(%g)' % (name, value), globals_, values)
@@ -659,7 +660,7 @@ class VarExercise:
 
             except (NameError, TypeError):
                 compute_list.append(compute_list.pop(0))
-                # It writes the first st the end
+                # It writes the first item to the end
 
                 number_of_uncomputable_formulas += 1
                 if number_of_uncomputable_formulas == len(compute_list):
@@ -709,7 +710,7 @@ class VarExercise:
                 value = values[element['name']]
             else:
                 # It is just a transient solution
-                value, latexstring = interval_.random(element['element'])
+                value = interval_.random(element['element'])
             ltx = latex_number(value)
             if element['unit']:
                 ltx += '~' + element['unit']
