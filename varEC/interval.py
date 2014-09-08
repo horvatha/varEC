@@ -1,68 +1,18 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-#  -*- Python -*-
+#!/usr/bin/env python3
 
 r""" The main function is random(interval):
-  random(interval) --> value, latex
+  random(interval) --> value
 
   interval:  for example    12..88  or 7e10..2e11
   value:  a value in the interval
   latex:  the latex form of the value
 
   See: https://github.com/horvatha/varEC/
-   (It's only in Hungarian language this time.) """
+"""
+
 from __future__ import print_function
 
-
-old_docstring = r"""
- Functions:
-   one_testpaper
-     uses: random
-             uses: same_exponent
-             uses: set in class Exponential
-     uses: test_text in class IntervalList
-             uses: getintervals in class IntervalList
-                     uses:  add_interval in class IntervalList
-
- Number formats:
-  exponential -- there's 'e' in it. (1.2e24)
-  standard --    others   (234.24 or 144)
-
- Variables:
-   num_string:   The string format of the number.
-                 This format is same as it is in Python.
-   factor and exponent: the number is factor * (10 ** exponent)
-         factor is always integer
-   value: the value of the number
-   format: see 'Number formats'
-
-   vstring: the latex format of the number
-   dec_point: the decimal point, '.' or ','
-   times:  the multiplication sign in latex
-       usually  \times or \cdot
-
-
- """
-
 from random import randint
-
-from varEC.lang import lang
-
-try:
-    exec('from varEC.setup_%s import decimal_point, times' % lang)
-except ImportError:
-    print("I use english instead of %s." % lang)
-    from varEC.setup_en import decimal_point, times
-
-
-verbose = 0
-
-
-###############################################
-#
-#  Part 1.  Make a random number in an interval
-#
-###############################################
 
 
 class Exponential:
@@ -81,8 +31,9 @@ class Exponential:
         e.g. set('-1,5e23')  -->
              self.factor = -15,
              self.exponent = 22,
-             self.format = 'exponential'    (It is 'standard', if there is not an 'e' in num_string.)
-             self.dec_point = ','  # In Hungary the decimal 'point' is ',', not '.'
+             self.format = 'exponential'
+                  (It is 'standard', if there is not an 'e' in num_string.)
+             self.dec_point = ','  # In Hungary the decimal 'point' is ','
         """
         num_string = num_string.strip()  # ' -03.23e015  ' --> '-03.23e015'
 
@@ -147,59 +98,20 @@ class Exponential:
                 self.factor = self.factor[:-1]
                 self.exponent = self.exponent + 1
 
-#   # Makes two (valuable??) digits if it is less
-#   #hu legalább két értékes jegy
-#   if len(factor) == 1:
-#     factor = factor + '0'
-#     exponent = exponent - 1
-
         self.factor = sign * int(self.factor)      # (-323, 13)
 
     def __str__(self):
-        try:
-            string = "%de%d (%s)" % (self.factor, self.exponent, self.format)
-        except TypeError:
-            string = 'Not well defined.'
-        return string
-
-
-def Exponent_test():
-    a = Exponential()
-    for num_string in ['200', '10', '1000', '-2e24']:
-        a.set(num_string)
-        print(num_string, a)
-        print('Factor: %d, exponent: %d, format: %s' % (
-            a.factor, a.exponent, a.format
+        return "Exponential(%de%d, %s)" % (
+            self.factor, self.exponent, self.format
         )
-        )
-
-
-# It was the original plan
-##############################
-
-#   """ good_exponent(num_string) --> (factor, exponent)
-
-#    e.g.  if num_string is '-03.23e015' it gives (-323, 13)
-#    (The spaces around it are allowed, but in it no.
-#     good: ' 15' , bad: '3 e5')
-
-#    1. The factor is the integer. (The smallest with?? the contitions 1-3)
-#    2. If there are some zeros after the '.' it will be included in factor.
-#        '1.00' --> (100, -2)
-
-#    3. If it is an integer (whithout '.' and 'e') the exponent will be
-#      not negativ.  (If it is 'integer' then the output is 'integer'.)
-#        '1' --> (1, 0)
-
-#    The 4. point is only a plan.
-#    4. If there is no stronger condition, the output has 2 significant digits.
-#   """
 
 
 def same_exponent(num_string1, num_string2):
-    """same_exponent(num_string1, num_string2) --> [factor1, factor2], common_exponent, dec_point, format
+    """same_exponent(num_string1, num_string2) -->
+           [factor1, factor2], common_exponent, dec_point, format
 
-    It writes the the given numbers into a "factor * 10**common_exponent" format.
+    It writes the the given numbers into
+                          a "factor * 10**common_exponent" format.
 
     num_string1, num_string2: two number in string format
     factor1, factor2: the factor of the first and second number
@@ -225,50 +137,19 @@ def same_exponent(num_string1, num_string2):
     else:
         format = 'exponential'
 
-    # decimal point (usually '.' or ',')
-    if exp1.dec_point is None:
-        exp1.dec_point = exp2.dec_point
-    elif exp2.dec_point is None:
-        exp2.dec_point = exp1.dec_point
-
-    if exp1.dec_point == exp2.dec_point:
-        dec_point = exp1.dec_point
-    else:
-        raise ValueError('there are two types of decimal point')
-
-    return [exp1.factor, exp2.factor], common_exponent, dec_point, format
+    return [exp1.factor, exp2.factor], common_exponent, format
 
 
-def same_exponent_test():
-    # same_exponent = same_exponent2
-    print("same_exponent( '-2e23','3e24' )    -->",)
-    print(same_exponent('-2e23', '3e24'))
-
-    print("same_exponent('1000','20000' )    -->",)
-    print(same_exponent('1000', '20000'))
-
-    print("same_exponent('-2','5' )    -->",)
-    print(same_exponent('-2', '5'))
-
-    print("same_exponent('-2.00','5' )    -->",)
-    print(same_exponent('-2.00', '5'))
-
-
-def random(interval, verbose=0):
-    """ random(interval) --> value, latex
+def random(interval):
+    """ random(interval) --> value
 
    value is a random number in the interval.
-   The latex is the latex form of value.
    The value is in an integer form, if it is possible."""
 
-    if verbose > 0:
-        print("** interval.random() running")
-    if verbose > 1:
-        print(' Interval: %s' % interval)
     num_string1, num_string2 = interval.split('..')
     num_string1 = num_string1.replace('E', 'e')
     num_string2 = num_string2.replace('E', 'e')
-    factors, exponent, dec_point2, format = \
+    factors, exponent, format = \
         same_exponent(num_string1, num_string2)
 
     factor1, factor2 = factors
@@ -276,7 +157,7 @@ def random(interval, verbose=0):
         ratio = abs(factor2/factor1)
     else:
         ratio = 100000
-    # It could be logaritmical ... if ratio >10
+    # TODO It could be logaritmical ... if ratio >10
     if ratio >= 500:
         raise ValueError('too much range')
 
@@ -286,30 +167,7 @@ def random(interval, verbose=0):
 #     newexponent = exponent - delta
 #     value = float(value) / (10.0)
     value = newfactor*10.0**exponent
-
-    latex = value2latex(value)
-    return value, latex
-
-
-def value2latex(value, verbose=0):
-    """ It converts a value to LaTeX format."""
-
-    #   try:
-    #     if value == int(value):
-    #       if verbose: print('interval.value2latex(): integer')
-    #       return str(int(value))
-    #   except OverflowError:
-    #     pass
-
-    # vstring = '%.4g' % value
-    vstring = '%.8g' % value
-    if 'e' in vstring:
-        vstring = vstring.replace('e', times + '10^{') + '}'
-    if '.' in vstring and decimal_point != '.':
-        vstring = vstring.replace('.', decimal_point)
-
-    latex = vstring.replace('+', '')
-    return latex
+    return value
 
 
 def random_test():
@@ -319,35 +177,9 @@ def random_test():
                  '2e-8..16e-8', '2E-8..6E-8']:
         print('\n****', intv)
         for i in range(3):
-            num, string = random(intv)
             print('In interval %s is %s. (LaTeX form: %s)' %
-                  (intv, str(num), string))
+                  (intv, random(intv)))
 
-    #   print
-    #   for i in range(20):
-    #     print(random('0..1'),)
-
-    #   list = [0]*10
-    #   for i in range(1000):
-    #     num = random('1..9')
-    #     list[num] = list[num] + 1
-    #   list.sort()
-    #   print(list)
-
-
-#######################################
-#
-#   Part 2:   Test
-#
-#######################################
-
-def test():
-    "Uncomment the item you want to test."
-    # test1()
-    # same_exponent_test()
-    random_test()
-    # Exponent_test()
-    # Variation_test()
 
 if __name__ == '__main__':
-    test()
+    random_test()
