@@ -19,11 +19,14 @@ import re
 def parse_floating_number(num_string):
     floating_point_regexp = re.compile(
         """
-        (?P<sign>[+-]?)
-        (?P<significand>(
+        (?P<significand>
+           [+-]?
+           (
            ([1-9][0-9]*\.?[0-9]*)
            |
-           (0?\.[0-9]+)))
+           (0?\.[0-9]+)
+           )
+        )
         ([Ee](?P<exponent>[+-]?[0-9]+))?
         """,
         re.VERBOSE
@@ -33,8 +36,14 @@ def parse_floating_number(num_string):
         raise ValueError("It is not a well-formed floating point number.")
     groupdict = match.groupdict()
     list_ = [groupdict.get(key, None)
-             for key in "sign significand exponent".split()]
+             for key in "significand exponent".split()]
     return tuple(list_)
+
+
+def is_one_digit(num_string):
+    if num_string[0] in "+-":
+        num_string = num_string[1:]
+    return len(num_string) == 1
 
 
 class NormalizedNumber:
@@ -58,23 +67,20 @@ class NormalizedNumber:
         num_string = num_string.strip().lower()
         # ' -03.23E015  ' --> '-03.23e015'
         num_string = num_string.replace(',', '.')
-        sign_string, absolute_factor, exponent = \
+        factor, exponent = \
             parse_floating_number(num_string)
 
-        sign = {"-": -1, "+": 1, "": 1}[sign_string]
-
-        # One character number
-        if exponent is None and len(absolute_factor) == 1:
-            self.factor = sign * int(absolute_factor)
+        if exponent is None and is_one_digit(factor):
+            self.factor = int(factor)
             self.exponent = 0
             return
 
         if exponent is None:
             self.format = 'standard'
             self.exponent = '0'
-            self.factor = absolute_factor
+            self.factor = factor
         else:
-            self.factor, self.exponent = absolute_factor, exponent
+            self.factor, self.exponent = factor, exponent
             self.format = 'exponential'
         self.exponent = int(self.exponent)
 
@@ -92,7 +98,7 @@ class NormalizedNumber:
                 self.factor = self.factor[:-1]
                 self.exponent = self.exponent + 1
 
-        self.factor = sign * int(self.factor)      # (-323, 13)
+        self.factor = int(self.factor)      # (-323, 13)
 
     def convert_to_given_exponent(self, exponent):
         assert isinstance(exponent, int)
