@@ -13,8 +13,29 @@ r""" The main function is random(interval):
 from __future__ import print_function
 
 from random import randint
+import re
 
-floating_point_regexp = "(([1-9][0-9]*\.?[0-9]*)|(\.[0-9]+))([Ee][+-]?[0-9]+)?"
+
+def parse_floating_number(num_string):
+    floating_point_regexp = re.compile(
+        """
+        (?P<sign>[+-])?
+        (?P<significand>(
+           ([1-9][0-9]*\.?[0-9]*)
+           |
+           (0?\.[0-9]+)))
+        ([Ee](?P<exponent>[+-]?[0-9]+))?
+        """,
+        re.VERBOSE
+    )
+    match = floating_point_regexp.match(num_string)
+    if match is None:
+        raise ValueError("It is not a well-formed floating point number.")
+    groupdict = match.groupdict()
+    list_ = [groupdict.get(key, None)
+             for key in "sign significand exponent".split()]
+    return tuple(list_)
+
 
 class NormalizedNumber:
     def __init__(self, num_string):
@@ -34,10 +55,10 @@ class NormalizedNumber:
              self.format = 'exponential'
                   (It is 'standard', if there is not an 'e' in num_string.)
         """
-        num_string = num_string.strip()  # ' -03.23e015  ' --> '-03.23e015'
-
-        if ',' in num_string:
-            num_string = num_string.replace(',', '.')
+        num_string = num_string.strip().lower()
+        # ' -03.23E015  ' --> '-03.23e015'
+        num_string = num_string.replace(',', '.')
+        sign_, absolute_factor, exponent = parse_floating_number(num_string)
 
         # Sign
         if num_string[0] == '-':
@@ -52,7 +73,6 @@ class NormalizedNumber:
         # Delete the zeros at the beginning of num_string.
         while num_string[0] == '0' and len(num_string) > 1:   # '3.23e015'
             num_string = num_string[1:]
-            # num_string.pop(0)  # Doesn't work it in python2.0. In 1.5 not.
 
         # One character number
         if len(num_string) == 1:
@@ -61,7 +81,6 @@ class NormalizedNumber:
             return
 
         #  Handling of 'e'
-        num_string.lower()  # 'E' --> 'e' if it is any
         parts = num_string.split('e')  # ('3.23', '15')
         if len(parts) == 1:
             self.format = 'standard'
@@ -80,10 +99,6 @@ class NormalizedNumber:
             integer, fract = factor_parts
             self.exponent = self.exponent - len(fract)
             self.factor = integer + fract     # ('323', 13)
-
-        # Delete the zeros at the beginning of factor.
-        while self.factor[0] == '0':
-            self.factor = self.factor[1:]
 
         # It handels the zeros at the end of the factor
         # if it is an integer.

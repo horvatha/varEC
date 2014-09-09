@@ -4,6 +4,32 @@ import unittest
 from varEC import interval
 
 
+class TestParseFloatingNumber(unittest.TestCase):
+
+    def test_known_values(self):
+        known_values = {
+            '200': (None, "200", None),
+            '+200': ("+", "200", None),
+            '200.00': (None, "200.00", None),
+            '20000e-2': (None, "20000", "-2"),
+            '0.0000012': (None, "0.0000012", None),
+            '10': (None, "10", None),
+            '.125': (None, ".125", None),
+            '0.125': (None, "0.125", None),
+            '1000': (None, "1000", None),
+            '-2e24': ("-", "2", "24"),
+            '-2e024': ("-", "2", "024"),
+            '6.02e23': (None, "6.02", "23"),
+            '9.81e000': (None, "9.81", "000"),
+        }
+        for num_string, result in known_values.items():
+            self.assertEqual(interval.parse_floating_number(num_string), result)
+            if "e" in num_string:
+                self.assertEqual(
+                    interval.parse_floating_number(num_string.upper()),
+                    result)
+
+
 class TestNormalizedNumber(unittest.TestCase):
 
     def test_known_values(self):
@@ -13,6 +39,7 @@ class TestNormalizedNumber(unittest.TestCase):
             '200': (2, 2, standard),
             '200.00': (20000, -2, standard),
             '20000e-2': (20000, -2, exponential),
+            '20000e-02': (20000, -2, exponential),
             '0.0000012': (12, -7, standard),
             '10': (1, 1, standard),
             '.125': (125, -3, standard),
@@ -29,6 +56,17 @@ class TestNormalizedNumber(unittest.TestCase):
             self.assertEqual(factor, normed.factor)
             self.assertEqual(exponent, normed.exponent)
             self.assertEqual(format_, normed.format)
+
+    def test_bad_values(self):
+        bad_arguments = (
+            "001000",
+            "-02e3",
+            "-02e-33",
+            "-02e-33",
+        )
+        for num_string in bad_arguments:
+            with self.assertRaises(ValueError):
+                interval.parse_floating_number(num_string)
 
     def test_convert_to_given_exponent(self):
         known_values = {
