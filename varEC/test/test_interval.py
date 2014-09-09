@@ -104,5 +104,47 @@ class TestSameExponent(unittest.TestCase):
             self.assertEqual(interval.same_exponent(*args), result)
 
 
+class TestRandom(unittest.TestCase):
+
+    def test_known_values(self):
+
+        known_values = {
+            '2.00e16..22e15': (2e16, 22e15),
+            '2.00..7': (2, 7),
+            '5000..25000': (5000, 25000),
+            '10..200': (10, 200),
+            '-20..9': (-20, 9),
+            '-2.00e-3..9e-3': (-2e-3, 9e-3),
+            '-2.00e-7..9e-7': (-2e-7, 9e-7),
+            '1,5e3..6,5e3': (1.5e3, 6.5e3),
+            '0,1..0,4': (0.1, 0.4),
+            '0,12..0,88': (0.12, 0.88),
+            '2e-8..16e-8': (2e-8, 16e-8),
+            '2E-8..6E-8': (2e-8, 6e-8),
+        }
+        for i in range(10):
+            for interval_, limits in known_values.items():
+                min, max = limits
+                random_value = interval.random(interval_)
+                self.assertGreaterEqual(random_value, min-abs(min)/1000)
+                self.assertGreaterEqual(max+abs(max)/1000, random_value)
+
+    def test_small_combinations(self):
+
+        known_values = {
+            '2..4': {2, 3, 4},
+            '2e16..4e16': {2e16, 3e16, 4e16},
+            '2e-16..4e-16': {2e-16, 3e-16, 4e-16},
+            '1.9e16..2.2e16': {19e15, 20e15, 21e15, 22e15},
+            '19e15..22e15': {19e15, 20e15, 21e15, 22e15},
+            '1.97e17..1.99e17': {197e15, 198e15, 199e15},
+        }
+        for i in range(10):
+            for interval_, set_ in known_values.items():
+                random_value = interval.random(interval_)
+                self.assertIn(random_value, set_)
+
+    # TODO number of significant digits should be checked more cleverly
+
 if __name__ == "__main__":
     unittest.main()

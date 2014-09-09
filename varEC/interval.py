@@ -5,7 +5,6 @@ r""" The main function is random(interval):
 
   interval:  for example    12..88  or 7e10..2e11
   value:  a value in the interval
-  latex:  the latex form of the value
 
   See: https://github.com/horvatha/varEC/
 """
@@ -168,24 +167,5 @@ def random(interval):
         raise ValueError('too much range')
 
     newfactor = randint(factor1, factor2)
-#   if len(`value`) > 1:
-#     delta = len(`value`) - 1
-#     newexponent = exponent - delta
-#     value = float(value) / (10.0)
     value = newfactor*10.0**exponent
     return value
-
-
-def random_test():
-    for intv in ['2.00e16..22e15', '2.00..7', '5000..25000',
-                 '10..200', '-20..9', '-2.00e-3..9e-3', '-2.00e-7..9e-7',
-                 '1,5e3..6,5e3', '0,1..0,4', '0,12..0,88',
-                 '2e-8..16e-8', '2E-8..6E-8']:
-        print('\n****', intv)
-        for i in range(3):
-            print('In interval %s is %s. (LaTeX form: %s)' %
-                  (intv, random(intv)))
-
-
-if __name__ == '__main__':
-    random_test()
