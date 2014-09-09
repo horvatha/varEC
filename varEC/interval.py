@@ -14,13 +14,13 @@ from __future__ import print_function
 
 from random import randint
 
+floating_point_regexp = "(([1-9][0-9]*\.?[0-9]*)|(\.[0-9]+))([Ee][+-]?[0-9]+)?"
 
-class Exponential:
+class NormalizedNumber:
     def __init__(self, num_string):
         self.factor = None
         self.exponent = None
         self.format = 'standard'
-        self.dec_point = None
         self.set(num_string)
 
     def set(self, num_string):
@@ -33,17 +33,11 @@ class Exponential:
              self.exponent = 22,
              self.format = 'exponential'
                   (It is 'standard', if there is not an 'e' in num_string.)
-             self.dec_point = ','  # In Hungary the decimal 'point' is ','
         """
         num_string = num_string.strip()  # ' -03.23e015  ' --> '-03.23e015'
 
         if ',' in num_string:
-            dec_point = ','
             num_string = num_string.replace(',', '.')
-        if '.' in num_string:
-            dec_point = '.'
-        else:
-            dec_point = None
 
         # Sign
         if num_string[0] == '-':
@@ -100,44 +94,50 @@ class Exponential:
 
         self.factor = sign * int(self.factor)      # (-323, 13)
 
+    def convert_to_given_exponent(self, exponent):
+        assert isinstance(exponent, int)
+        exponent_diff = self.exponent - exponent
+        if not exponent_diff:
+            return
+        self.exponent = exponent
+        self.factor = self.factor * 10**exponent_diff
+
     def __str__(self):
-        return "Exponential(%de%d, %s)" % (
+        return "NormalizedNumber(%de%d, %s)" % (
             self.factor, self.exponent, self.format
         )
 
 
 def same_exponent(num_string1, num_string2):
     """same_exponent(num_string1, num_string2) -->
-           [factor1, factor2], common_exponent, dec_point, format
+           [factor1, factor2], common_exponent, format
 
     It writes the the given numbers into
                           a "factor * 10**common_exponent" format.
 
     num_string1, num_string2: two number in string format
     factor1, factor2: the factor of the first and second number
-    dec_point can be '.' or ','
     format can be 'standard or 'exponential' """
 
-    exp1 = Exponential(num_string1)
-    exp2 = Exponential(num_string2)
-    common_exponent = min(exp1.exponent, exp2.exponent)
+    normalized_number1 = NormalizedNumber(num_string1)
+    normalized_number2 = NormalizedNumber(num_string2)
+    common_exponent = min(normalized_number1.exponent,
+                          normalized_number2.exponent)
 
-    for exp in [exp1, exp2]:
-        diff = exp.exponent - common_exponent
-        if diff:
-            exp.exponent = exp.exponent - diff
-            exp.factor = exp.factor * (10**diff)
+    for normalized_number in [normalized_number1, normalized_number2]:
+        normalized_number.convert_to_given_exponent(common_exponent)
 
-    if exp1.factor > exp2.factor:
+    if normalized_number1.factor > normalized_number2.factor:
         raise ValueError('the first number in the interval is the bigger')
 
     # format
-    if exp1.format == exp2.format == 'standard':
+    if normalized_number1.format == normalized_number2.format == 'standard':
         format = 'standard'
     else:
         format = 'exponential'
 
-    return [exp1.factor, exp2.factor], common_exponent, format
+    return [normalized_number1.factor,
+            normalized_number2.factor], common_exponent, format
 
 
 def random(interval):
