@@ -19,7 +19,7 @@ import re
 def parse_floating_number(num_string):
     floating_point_regexp = re.compile(
         """
-        (?P<sign>[+-])?
+        (?P<sign>[+-]?)
         (?P<significand>(
            ([1-9][0-9]*\.?[0-9]*)
            |
@@ -58,39 +58,24 @@ class NormalizedNumber:
         num_string = num_string.strip().lower()
         # ' -03.23E015  ' --> '-03.23e015'
         num_string = num_string.replace(',', '.')
-        sign_, absolute_factor, exponent = parse_floating_number(num_string)
+        sign_string, absolute_factor, exponent = \
+            parse_floating_number(num_string)
 
-        # Sign
-        if num_string[0] == '-':
-            sign = -1
-            num_string = num_string[1:]   # '03.23e015'
-        elif num_string[0] == '+':
-            sign = +1
-            num_string = num_string[1:]
-        else:
-            sign = +1  # Unfortunately it is +1 too, if the value is 0.
-
-        # Delete the zeros at the beginning of num_string.
-        while num_string[0] == '0' and len(num_string) > 1:   # '3.23e015'
-            num_string = num_string[1:]
+        sign = {"-": -1, "+": 1, "": 1}[sign_string]
 
         # One character number
-        if len(num_string) == 1:
-            self.factor = sign*int(num_string)
+        if exponent is None and len(absolute_factor) == 1:
+            self.factor = sign * int(absolute_factor)
             self.exponent = 0
             return
 
-        #  Handling of 'e'
-        parts = num_string.split('e')  # ('3.23', '15')
-        if len(parts) == 1:
+        if exponent is None:
             self.format = 'standard'
-            self.exponent = '0'  # Exponent is 0.
-            self.factor = parts[0]
-        elif len(parts) == 2:
-            self.factor, self.exponent = parts
-            self.format = 'exponential'
+            self.exponent = '0'
+            self.factor = absolute_factor
         else:
-            raise ValueError("more then one 'e' is in the number_string")
+            self.factor, self.exponent = absolute_factor, exponent
+            self.format = 'exponential'
         self.exponent = int(self.exponent)
 
         # Handling of dec_point '.'
