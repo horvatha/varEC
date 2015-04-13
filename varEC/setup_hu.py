@@ -13,13 +13,13 @@ from varEC import gadgets
 """
 
 FILE_GROUP = 'villanytan'  # I will use bin/villanytan.py
-FILE_GROUP = 'villamos_energetika'
 FILE_GROUP = 'halozatok'
-FILE_GROUP = 'informatika'     # I will use bin/informatika.py
-FILE_GROUP = 'hiradastechnika'     # I will use bin/hiradastechnika.py
 FILE_GROUP = 'mat'     # I will use bin/mat.py
-FILE_GROUP = 'szamtudmat'      # I will use bin/szamtudmat.py
 FILE_GROUP = 'fizika'      # I will use bin/fizika.py
+FILE_GROUP = 'hiradastechnika'     # I will use bin/hiradastechnika.py
+FILE_GROUP = 'szamtudmat'      # I will use bin/szamtudmat.py
+FILE_GROUP = 'informatika'     # I will use bin/informatika.py
+FILE_GROUP = 'villamos_energetika'
 
 code_interval = (1, 10000)
 
@@ -85,7 +85,7 @@ preamble_text_base = plus = r"""
 %% Ide jöhetnek a különböző csomagok (\usepackage{ })
 """
 
-## For intervalrandom() in interval.py
+# For intervalrandom() in interval.py
 times = r'\cdot'
 decimal_point = ','
 
@@ -108,7 +108,7 @@ try:
 except NameError:
     date = gadgets.date_string_from_triple(gadgets.tomorrow_triple())
 
-header_footer.append('date','Dátum', date)
+header_footer.append('date', 'Dátum', date)
 
 make = DataList('A szükséges formátum')
 try:
@@ -124,5 +124,5 @@ variations = DataList('Változatok')
 try:
     num = num
 except NameError:
-    num = -1 # Not valid value. It will ask it, if there is no value.
+    num = -1  # Not valid value. It will ask it, if there is no value.
 variations.append('num', 'A szükséges változatok száma', num)
