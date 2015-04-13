@@ -984,7 +984,3 @@ def latextable_row(string_list):
         row = ' &'.join(string_list)
     row += ' \\\\\n'
     return row
-
-
-if __name__ == '__main__':
-    pass
