@@ -70,6 +70,8 @@ def table(*scores, **kwargs):
 
 vfill = r"\ifthenelse  {\equal{\doctype}{testpaper}}{\vfill}{}"
 
+newpage = r"\ifthenelse  {\equal{\doctype}{testpaper}}{\newpage}{}"
+
 
 def textin(text, type_="testpaper", elsetext=""):
     assert type_ in {"testpaper", "plain", "draft"}
