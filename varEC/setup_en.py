@@ -10,28 +10,24 @@
  Default values. Change it, if you want.
 """
 
-GROUP='physics'		# I will use bin/physics.py
+GROUP = 'physics'		# I will use bin/physics.py
 
-code_interval = (1,10000)
-
-##  It will be perhaps in an another file:
-##  'fesor_config.py'
-
+code_interval = (1, 10000)
 
 import time
 
 
 # If you give here the paths, you need only type the
 # filename in interactiv mode.
-file_paths = ['.','physics_en']
+file_paths = ['.', 'physics_en']
 
 # Standard group names / Szokásos csoportnevek
-group_names='ABCDEFGHIJKLMNOPQRSTUVZ'
+group_names = 'ABCDEFGHIJKLMNOPQRSTUVZ'
 
 # Language (according to babel)/ Nyelv
 # It can be 'magyar' only at this time.
 # Perhaps it will be 'english', 'german', 'ngerman' ...
-babel_lang='magyar'
+babel_lang = 'magyar'
 
 # It will be at %s in r"\documentclass%s{article}"
 page = 'letter'
@@ -77,49 +73,51 @@ preamble_text_base = plus = r"""
 %% Ide jöhetnek a különböző csomagok (\usepackage{ })
 """
 
-## For intervalrandom() in interval.py
+# For intervalrandom() in interval.py
 times = '\\times'
-decimal_point='.'
+decimal_point = '.'
 
 
 from varEC.datalist import DataList
 
 
 files = DataList('Files')
-files.append('input', 'The names of the exercise-serieses wich contains the exercises', input_files)
+files.append(
+    'input',
+    'The names of the exercise-serieses wich contains the exercises',
+    input_files
+)
 files.append('output', 'The whole name of the output file', output_file)
 
 
 header_footer = DataList('Dates for header and footer')
-header_footer.append('title', 'Title','Physics')  #Matematika dolgozat')
+header_footer.append('title', 'Title', 'Physics')
 header_footer.append('inst', 'Institution', 'XY TeXnical Scool')
-header_footer.append('course','Course, grade','LaTeX (correspondence course)') #Villamosmérnök (nappali)')
+header_footer.append('course', 'Course, grade', 'LaTeX (correspondence course)')
 shift = 1  # Egy nap múlva (holnap)
 localtime = time.localtime(time.time() + shift*24*3600)
-date_en = time.strftime("%d %m %Y", localtime) # English format
+date_en = time.strftime("%d %m %Y", localtime)  # English format
 try:
     date = date
 except NameError:
-   date = date_en
+    date = date_en
 
-header_footer.append('date','Date', date)
-
-## other = DataList()
-## other.set_text('Egyéb adatok és beállítások')
-## other.append('newline', 'Hol legyen új sor?', )
-## if __name__ == '__main__':
-##     setup([header_footer,files])
+header_footer.append('date', 'Date', date)
 
 make = DataList('The format you need')
 try:
     format = format
 except NameError:
     format = 0
-make.append('format','The file format you need (it can be 0, dvi, ps, pdf, pdflatex)', format)
+make.append(
+    'format',
+    'The file format you need (it can be 0, dvi, ps, pdf, pdflatex)',
+    format
+)
 
 variations = DataList('Variations')
 try:
     num = num
 except NameError:
-    num = -1 # Not valid value. It will ask it, if there is no value.
+    num = -1  # Not valid value. It will ask it, if there is no value.
 variations.append('num', 'The number of variations', num)

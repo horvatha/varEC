@@ -135,7 +135,6 @@ def same_exponent(num_string1, num_string2):
     if normalized_number1.factor > normalized_number2.factor:
         raise ValueError('the first number in the interval is the bigger')
 
-    # format
     if normalized_number1.format == normalized_number2.format == 'standard':
         format = 'standard'
     else:
