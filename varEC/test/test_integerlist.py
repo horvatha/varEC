@@ -44,16 +44,24 @@ class TestUnique(unittest.TestCase):
         self.known_values = (
             ([-1, -1, 1, 1, 4, 3, 3, 3,
               None, None, None, None, None, None, None, None, None],
-             {1: 2, -1: 2, 3: 3, None: 9}),
+             {1: 2, -1: 2, 3: 3, None: 9},
+             [-1, 1, 4, 3, None]),
             ([1, 1, 1, 1, 1, 2, 3, 3, 3, 5, "a", "a",
               9, 9, 9, 9, 9, 9, 9, 9],
-             {1: 5, 3: 3, 'a': 2, 9: 8}),
+             {1: 5, 3: 3, 'a': 2, 9: 8},
+             [1, 2, 3, 5, "a", 9]),
+            ([],
+             {},
+             []),
         )
 
     def test_str_return_proper_value(self):
-        for list_, result in self.known_values:
+        for list_, result, _ in self.known_values:
             self.assertEqual(integerlist.search_not_uniq(list_), result)
 
+    def test_uniq_return_proper_values(self):
+        for list_, _, result in self.known_values:
+            self.assertEqual(integerlist.uniq(list_), result)
 
 if __name__ == "__main__":
     unittest.main()

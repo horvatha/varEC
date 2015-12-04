@@ -47,20 +47,16 @@ class IntegerList(list):
 
 def uniq(ordered_list):
     """Returns with the list, but all the items will exists one times."""
-    list = ordered_list[:]
-    previous_item = list[0]
-    for item in list[1:]:
+    assert isinstance(ordered_list, list)
+    list_ = ordered_list[:]
+    if not ordered_list:
+        return []
+    previous_item = list_[0]
+    for item in list_[1:]:
         if item == previous_item:
-            list.remove(item)
+            list_.remove(item)
         previous_item = item
-    return list
-
-
-def _uniq_test():
-    """prints [1,2,3,5,"a",9]"""
-
-    L = [1, 1, 1, 1, 1, 2, 3, 3, 3, 5, "a", "a",  9, 9, 9, 9, 9, 9, 9, 9]
-    print(uniq(L))
+    return list_
 
 
 def search_not_uniq(list):
