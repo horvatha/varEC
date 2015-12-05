@@ -56,7 +56,7 @@ mesg = {  'next':'Következő lépés: ',
 *** Ha végeztél, nyomj meg valamilyen gombot, és a program folytatódik.\n''',
         'foreword'      : '''Jó munkát! www.arek.uni-obuda.hu/harp/latex/ec''',
         'group'       :  '"%s" csoport feladatai: %s',
-        'version'     :  'Ehhez a programhoz legalább 2.0-ás Pythonra van szükség.\n(www.python.hu, www.python.org)'}
+        'version'     :  'Ehhez a programhoz legalább 3.2-es Pythonra van szükség.\n(www.python.hu, www.python.org)'}
 
 
 
@@ -106,16 +106,16 @@ err = {'endless definition' :
 # 4. The strings, which effects sg. (e.g. interrupt sg.)
 #  Usually the lowercase forms are enough.
 keys = {'quit':     ['k', 'ki', 'q', 'quit'],
-         'yes':    ['igen', 'i', '1', 1, 'y', 'yes'],
-         'no' :    ['nem' , 'n', '0', 0, 'ne', 'no']}
+        'yes':    ['igen', 'i', '1', 1, 'y', 'yes'],
+        'no':    ['nem', 'n', '0', 0, 'ne', 'no']}
 
 todo = {'exercises and datas in':
-           'Beolvasom a feladatsorszámokat és pár szükséges adatot',
-       'test' : 'Megvizsgálom a feladatkódszámokat',
-       'substitute intervalls':
-           'Több példányt csinálok a dolgozatokból különböző számértékekkel',
-       'check again' : 'Ismét megvizsgálom a feladatot',
-       }
+        'Beolvasom a feladatsorszámokat és pár szükséges adatot',
+        'test': 'Megvizsgálom a feladatkódszámokat',
+        'substitute intervalls':
+        'Több példányt csinálok a dolgozatokból különböző számértékekkel',
+        'check again': 'Ismét megvizsgálom a feladatot',
+        }
 
 # 5. IT is useful to do a ...?
 
@@ -128,9 +128,3 @@ dictionary = {
     '''% A \\doctype értékei lehetnek: testpaper, plain és draft.\n''',
     'variation': '%d. variáció'
 }
-
-menu_list = [('make_testpapers' , 'Feladatok kiválogatása, feladatsor(ok) készítése'),
-            ('check_exercise_book', 'Egy feladatgyűjtemény ellenőrzése (kódszámok)'),
-          ('check_exercise', 'Egy feladat ellenőrzése (interval)'),
-          ('numberer', 'Hiányzó feladatkódszámok elkészítése'),
-          ('exit', 'Kilépés')]
