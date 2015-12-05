@@ -1,7 +1,4 @@
 #!/usr/bin/env python3
-# coding: utf-8
-
-from __future__ import print_function
 
 """ Usage: ec-tryexercise.py [group] code
 It makes several variations for the exercise
@@ -22,6 +19,9 @@ def get_group():
 
 
 def main():
+    if sys.argv[1] in ('help', '-h', '--help', '-help'):
+        print(__doc__)
+        sys.exit()
     code = int(sys.argv[-1])
     group = get_group()
     locals_ = {}

@@ -12,14 +12,15 @@ from varEC import gadgets
  Default values. Change it, if you want.
 """
 
-FILE_GROUP = 'villanytan'  # I will use bin/villanytan.py
+# I will use varEC/{FILE_GROUP}.py as settings file.
+FILE_GROUP = 'villanytan'
 FILE_GROUP = 'halozatok'
-FILE_GROUP = 'mat'     # I will use bin/mat.py
-FILE_GROUP = 'fizika'      # I will use bin/fizika.py
-FILE_GROUP = 'hiradastechnika'     # I will use bin/hiradastechnika.py
-FILE_GROUP = 'szamtudmat'      # I will use bin/szamtudmat.py
-FILE_GROUP = 'informatika'     # I will use bin/informatika.py
+FILE_GROUP = 'mat'
+FILE_GROUP = 'hiradastechnika'
 FILE_GROUP = 'villamos_energetika'
+FILE_GROUP = 'fizika'
+FILE_GROUP = 'szamtudmat'
+FILE_GROUP = 'informatika'
 
 code_interval = (1, 10000)
 

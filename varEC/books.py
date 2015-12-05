@@ -30,12 +30,12 @@ def name_with_path(file, directories):
     It gives back all the 0 or more occurences in a list.
     """
 
-    list = []
+    name_list = []
     for path in directories:
         whole_name = os.path.join(path, file)
         if os.path.isfile(whole_name):
-            list.append(whole_name)
-    return list
+            name_list.append(whole_name)
+    return name_list
 
 
 def read_files_lines_or_empty_list(file):
@@ -101,7 +101,7 @@ class Environment:
 
 
 class Books:
-    """ Class for dealing with more exercise book."""
+    """ Class for handle a collection of exercise books."""
     def __init__(self,
                  file_names,
                  file_type='exercise series',
@@ -136,39 +136,37 @@ class Books:
 
     def codelist(self):
         """ It returns with all the codes in the books."""
-        list = []
+        codelist = []
         for book in self.books:
-            list += book.code_list
-        return list
+            codelist += book.code_list
+        return codelist
 
     def code_container_books(self, code):
         """ It returns with the books, which has the code."""
-        list = []
-        for book in self.books:
-            if code in book.code_list:
-                list.append(book)
-        return list
+        return [book for book in self.books if code in book.code_list]
 
     def get_exercises(self, code):
         """Get the exercises of the codes to check
         wheter there is multiple occurence."""
-        list = []
+        exercise_list = []
         for exercise_book in self.books:
-            for i, c in enumerate(exercise_book.code_list):
-                if code is c:
-                    list.append((exercise_book.file_name,
-                                 exercise_book.exercises[i]))
-        return list
+            for i, code_list in enumerate(exercise_book.code_list):
+                if code is code_list:
+                    exercise_list.append(
+                        (exercise_book.file_name, exercise_book.exercises[i])
+                    )
+        return exercise_list
 
     def exercises_with_bad_arguments(self):
         """ Returns with a list of the tuple (filename, row, argument). """
-        list = []
+        exercise_list = []
         for book in self.books:
-            delta_list = book.bad_arguments_row_and_argument()
-            delta_list = [(book.file_name, item[0], item[1])
-                          for item in delta_list]
-            list.extend(delta_list)
-        return list
+            delta_list = [
+                (book.file_name, item[0], item[1])
+                for item in book.bad_arguments_row_and_argument()
+            ]
+            exercise_list.extend(delta_list)
+        return exercise_list
 
     def definitions(self, codes=None):
         """ Returns with the definitions in all the books
@@ -190,7 +188,7 @@ class Books:
 
 
 class ExerciseBook:
-    """ Class for storeing the structure (and makeing several testpapers)."""
+    """ Class for storing the structure (and making several testpapers)."""
 
     def __init__(self,
                  file_name,
@@ -338,10 +336,10 @@ class ExerciseBook:
         print(ex)
         print
 
-    def exercise_text(self, code, solution=1):
+    def exercise_text(self, code, solution=True):
         """ Returns with the text of the exercise.
         If it doesn't exists it returns with None.
-        If solution = 0, it returns without solution."""
+        If solution = False, it returns without solution."""
         if code not in self.code_list:
             return None
         exercise = self.exercises[self.code_list.index(code)]

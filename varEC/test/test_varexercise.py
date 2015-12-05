@@ -94,6 +94,11 @@ class TestVariations(unittest.TestCase):
             framed = varexercise.frame(variation.one(1))
             with open('temp.tex', "w") as f:
                 f.writelines(framed)
+            with open('temp.tex', "r") as f:
+                text = f.read()
+            self.assertIn('\\documentclass', text)
+            self.assertIn('\\begin{document}', text)
+
             # TODO Should be checked, the files can be translated into pdf.
 
 

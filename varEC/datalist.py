@@ -107,7 +107,7 @@ class DataList:
 
     def setup(self):
         answer = keys['yes'][0]
-        while 1:
+        while True:
             cls()
             print(mesg['data'])
             print(self)

@@ -96,7 +96,7 @@ def menu():
 
 
 def ask_integer(_message, min=None, max=None):
-    while 1:
+    while True:
         num = input(_message)
         try:
             num = int(num)
@@ -115,7 +115,7 @@ def get_integer(ask_code, max=None, min=None):
     if max < min:
         raise ValueError('max is less than min')
 
-    while 1:
+    while True:
         try:
             num = int(input(ask(ask_code)))
         except ValueError:
