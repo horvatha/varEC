@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 #  -*- Python -*-
-# -W ignore
 r"""
 usage: ec-sorter.py [option]... [file]
 See the manual (it's only in Hungarian): manual/index.html
@@ -150,7 +148,7 @@ $ x_1 = x_2 = -1 $
 \end{megoldas}
 \end{feladat}
 
-Horváth Árpád 2002. jul
+Horváth Árpád 2002 -- 2015
 horvath.arpad@amk.uni-obuda.hu
 
 """
@@ -168,9 +166,7 @@ import getopt
 
 from varEC import varexercise
 
-# exercise_numbers=None # For prevent Warning message.
-
-from varEC.lang import lang, mesg, keys, dictionary
+from varEC.lang import lang, mesg, dictionary
 try:
     exec('from varEC.setup_%s import *' % lang)
 except ImportError:
@@ -178,11 +174,9 @@ except ImportError:
     from varEC.setup_en import *
 
 
-from varEC.message import error, message, ask_exit, ask, cls, get_integer
+from varEC.message import error, message, get_integer
 
 from varEC.books import Books
-
-MYDIR = os.path.abspath(sys.path[0])
 
 ##########################################
 #  Classes
@@ -331,23 +325,80 @@ def get_ordered_codes(exercise_numbers):
 ################################
 
 
-def make_testpapers():
+class OutputFile:
+    def __init__(self, name, is_4a5=False):
+        self.name = name
+        self.is_4a5 = is_4a5
 
-    # It opens and reads the files
-    global books
+
+class OutputFiles:
+    """Stores the files.
+
+    is_4a5 is boolean: if it is True, it will translated  into 4a5 format.
+    For non tex files it is meaningless.
+    """
+    def __init__(self):
+        self.list = []
+
+    def append(self, name, is_4a5=False):
+        of = OutputFile(name, is_4a5)
+        self.list.append(of)
+
+    def extend(self, namelist):
+        oflist = [OutputFile(name) for name in namelist]
+        self.list.extend(oflist)
+
+    def __str__(self):
+        return ''.join(["\t\t%s\n" % file.name for file in self.list])
+
+
+def get_pagesize(page):
+    if page in ['4a5', 'a5']:
+        pagesize = 'a5paper'
+        solution_pagesize = 'a4paper'
+    elif page == 'a4':
+        pagesize = 'a4paper'
+        solution_pagesize = 'a4paper'
+    else:
+        pagesize = page
+        solution_pagesize = page
+    list_pagesize = solution_pagesize
+    return pagesize, solution_pagesize, list_pagesize
+
+
+def get_number_of_variations(num, max_=100, min_=0):
+    try:
+        number_of_variations = int(num)
+    except ValueError:
+        number_of_variations = -1  # Not valid value. It will be asked.
+    if not min_ <= number_of_variations <= max_:
+        number_of_variations = get_integer('testpapers num', max=max_, min=min_)
+    return number_of_variations
+
+output_tex_files = OutputFiles()
+
+
+def save_file(text, parameters, file_name, is_4a5=False):
+    framed_text = varexercise.frame(
+        text,
+        **parameters
+    )
+    output_tex_files.append(file_name, is_4a5)
+    if options.verbose > 0:
+        message('file opened', file_name)
+    with open(file_name, 'w') as f:
+        f.writelines(framed_text)
+
+
+def make_testpapers(solution_file=True):
+
     books = Books(
         files.input,
         file_type='exercise series'
     )
 
     codes = get_ordered_codes(exercise_numbers)
-
-    try:
-        number_of_variations = int(variations.num)
-    except ValueError:
-        number_of_variations = -1  # Not valid value. It will be asked.
-    if not 0 <= number_of_variations <= 100:
-        number_of_variations = get_integer('testpapers num', max=100, min=0)
+    number_of_variations = get_number_of_variations(variations.num)
 
     global exercise_numbers
     variation = varexercise.Variations(
@@ -360,123 +411,62 @@ def make_testpapers():
         return
     base_name, extension = os.path.splitext(files.output)
 
-    global OutputFile
+    pagesize, solution_pagesize, list_pagesize = get_pagesize(page)
 
-    class OutputFile:
-        def __init__(self, name, is_4a5=False):
-            self.name = name
-            self.is_4a5 = is_4a5
-
-    class OutputFiles:
-        """Stores the files.
-
-        is_4a5 is boolean: if it is True, it will translated  into 4a5 format.
-        For non tex files it is meaningless.
-        """
-        def __init__(self):
-            self.list = []
-
-        def append(self, name, is_4a5=False):
-            of = OutputFile(name, is_4a5)
-            self.list.append(of)
-
-        def extend(self, namelist):
-            oflist = [OutputFile(name) for name in namelist]
-            self.list.extend(oflist)
-
-        def __str__(self):
-            return ''.join(["\t\t%s\n" % file.name for file in self.list])
-
-    output_tex_files = OutputFiles()
-
-    if page in ['4a5', 'a5']:
-        pagesize = 'a5paper'
-        solution_pagesize = 'a4paper'
-    elif page == 'a4':
-        pagesize = 'a4paper'
-        solution_pagesize = 'a4paper'
-    else:
-        pagesize = page
-        solution_pagesize = page
-    listpagesize = solution_pagesize
-
-    solution_text = variation.one()
-    solution_file = True  # It makes solution_file.
-    solution_file_name = "%s_megold.tex" % base_name
-    file_name = "%s.tex" % base_name
-    if variations.num == 0:
-        text = solution_text
-    else:
-        text = variation.all()
-
-    definitions = books.definitions(codes)
-    text_testpaper = varexercise.frame(
-        text,
-        doc_type='testpaper',
+    shared_parameters = dict(
         preamble_file="magyarpreambulum",
-        pagesize=pagesize,
-        fontsize=fontsize,
-        lhead=header_footer.title,
         rhead=header_footer.inst,
         lfoot=header_footer.course,
         rfoot=header_footer.date,
-        cfoot=None,
-        definitions=definitions
+        definitions=books.definitions(codes)
     )
-    output_tex_files.append(file_name, page == '4a5')
-    if options.verbose > 0:
-        message('file opened', file_name)
-    f = open(file_name, 'w')
-    f.writelines(text_testpaper)
-    f.close()
+
+    solution_text = variation.one()
+    text = solution_text if number_of_variations == 0 else variation.all()
+
+    parameters = shared_parameters.copy()
+    parameters.update(
+        doc_type='testpaper',
+        pagesize=pagesize,
+        fontsize=fontsize,
+        lhead=header_footer.title,
+        cfoot=None,
+    )
+    file_name = "%s.tex" % base_name
+    save_file(text, parameters, file_name, page == '4a5')
 
     if solution_file:
-        text_solution = varexercise.frame(
-            solution_text,
+
+        parameters = shared_parameters.copy()
+        parameters.update(
             doc_type='plain',
-            preamble_file="magyarpreambulum",
             pagesize=solution_pagesize,
             fontsize=fontsize,
             lhead=header_footer.title + " Megoldás",
-            rhead=header_footer.inst,
-            lfoot=header_footer.course,
-            rfoot=header_footer.date,
             cfoot='\\thepage',
-            definitions=definitions
         )
-        output_tex_files.append(solution_file_name, False)
-        if options.verbose > 0:
-            message('file opened', solution_file_name)
-        f = open(solution_file_name, 'w')
-        f.writelines(text_solution)
-        f.close()
+        file_name = "%s_megold.tex" % base_name
+        save_file(solution_text, parameters, file_name)
 
-    if not variations.num == 0:
+    if not number_of_variations == 0:
         text = variation.list()
-        if not text:  # if the variations exist:
+        if not text:
             raise ValueError('no variations in TeX source.')
         else:
-            text = varexercise.frame(text,
-                                     doc_type='plain',
-                                     fontsize=10,
-                                     pagesize=listpagesize,
-                                     lhead=header_footer.title,
-                                     rhead=dictionary['list title'],
-                                     lfoot=header_footer.course,
-                                     rfoot=header_footer.date,
-                                     cfoot='\\thepage',
-                                     definitions=definitions,
-                                     )
-            file_name = '%s_list.tex' % base_name
-            f = open(file_name, 'w')
-            output_tex_files.append(file_name, False)
-            f.writelines(text)
-            f.close()
+            parameters = shared_parameters.copy()
+            parameters.update(
+                doc_type='plain',
+                fontsize=10,
+                pagesize=list_pagesize,
+                lhead=header_footer.title,
+                cfoot='\\thepage',
+            )
+            file_name = "%s_list.tex" % base_name
+            save_file(text, parameters, file_name)
 
     message('wrote files', output_tex_files)
 
     other_output_files = OutputFiles()  # Non-tex files.
-    global make
     if make.format == '0':
         make.format = 0
     if output_tex_files.list and make.format:
@@ -487,6 +477,7 @@ def make_testpapers():
 
     print('\n')
     message('wrote files', "%s%s" % (output_tex_files, other_output_files))
+
 
 def _make_testpapers_test():
     """ It tests varexercise.Variations."""
