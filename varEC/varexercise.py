@@ -186,7 +186,7 @@ class Variations:
         pass
         # TODO
 
-    def group_list(self, group_number=1, with_solution=True):
+    def group_list(self, group_number=1):
         """ Returns with the values of the variations of a group as a latex text.
         If there is no variations, it returns with empty string ("")."""
         text = []
@@ -209,12 +209,12 @@ class Variations:
                         print(' '*5, latex_plain)  # !!!
                         text.append(latex_plain + '\n')
                     exercise_number += 1
-        if with_solution:
-            text.extend(self.one_group(group_number=group_number))
-            text.append("\\newpage\n")
+        # if with_solution:
+        #     text.extend(self.one_group(group_number=group_number))
+        #     text.append("\\newpage\n")
         return text
 
-    def list(self, frame=0, with_solution=True):
+    def list(self, frame=0):
         """ Returns with the values of the variations as a latex text.
         If there is no variations, it returns with empty string ("")."""
         text = []
@@ -222,7 +222,7 @@ class Variations:
             return ""
         for group_number in range(1, len(self.varexercise_numbers)+1):
             text.extend(
-                self.group_list(group_number, with_solution=with_solution))
+                self.group_list(group_number))
         return text
 
     def groups(self):
