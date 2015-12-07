@@ -14,7 +14,7 @@ if lang in [ 'magyar', 'hu']:
     from .lang_hu import *
     preamble_file = "magyarpreambulum"
 
-elif lang in [ 'english', 'en']:
+elif lang in ['english', 'en']:
     from .lang_en import *
     preamble_file = "preamble"
 

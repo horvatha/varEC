@@ -104,14 +104,3 @@ class DataList:
                     value = keys['no'][0]
             string = string + '%s : "%s"\n' % (text, value)
         return string
-
-    def setup(self):
-        answer = keys['yes'][0]
-        while True:
-            cls()
-            print(mesg['data'])
-            print(self)
-            answer = input(ask['change']).lower()
-            if answer in keys['no'] or answer == '':
-                return
-            self.query()

@@ -17,16 +17,17 @@ from question_set_creator import latex_tools
 
  See http://www.arek.uni-obuda.hu/harp/latex/ec
 """
-# bug list at ec-sorter.py
 
 from .lang import lang
-from .message import error, print_text
+from .message import print_text
 from varEC import possibilities
 
 from .books import Books
 import re
 import random
 import itertools
+from .common import _
+from .common import CodeNotFoundError, LaTeXError, UncomputableError
 
 from varEC import interval
 interval_ = interval
@@ -44,38 +45,11 @@ acosd = lambda x: 180/pi*acos(x)
 atand = lambda x: 180/pi*atan(x)
 """
 
-
-class LaTeXError(Exception):
-    def __init__(self, type_, code, row):
-        self.type_ = type_
-        self.code = code
-        self.row = row
-
-    def __str__(self):
-        return """There is a bad %s in the exercise %s!
-The format is %s{<base_value>}{<xxx>} and must be in one row!
-The row is:
- %s""" % (self.type_, self.code, self.type_, self.row)
-
-
-class EcSyntaxError(Exception):
-    def __init__(self, row):
-        self.row = row
-
-    def __str__(self):
-        return """There is a syntax error in the table
-in the row {0}.""".format(self.row)
-
 try:
     exec('from .setup_%s import decimal_point, times, FILE_GROUP' % lang)
 except ImportError:
     print("I use english instead of %s." % lang)
     from .setup_hu import decimal_point, times, FILE_GROUP
-try:
-    exec('from .lang_%s import mesg, err, dictionary' % lang)
-except ImportError:
-    print("I use english instead of %s." % lang)
-    from .lang_en import dictionary
 
 # TODO Not a nice solution, we should get the wide from "bin/%s.py" % FILE_GROUP
 if FILE_GROUP in ["szamtudmat", "hiradastechnika",
@@ -101,7 +75,6 @@ class Variations:
             file_names = [file_names]
         self.number_of_variations = number_of_variations
         self.books = Books(file_names)
-        self.all_code_exists = True
         self.make_varexercises(number_of_variations)
         self.variable_list = None
 
@@ -119,8 +92,7 @@ class Variations:
                 if isinstance(item, int):
                     code = item
                     if not self.books.code_container_books(code):
-                        error('exercise missing', code)
-                        self.all_code_exists = False
+                        raise CodeNotFoundError(code)
                     text = self.books.exercise_text(code)
                     vvar = VarExercise(text,
                                        code,
@@ -191,12 +163,12 @@ class Variations:
         If there is no variations, it returns with empty string ("")."""
         text = []
         group = self.varexercise_numbers[group_number-1]
-        group_name = dictionary['group_name'] % group[0]
+        group_name = _('Group %s') % group[0]
         text.append('\n\\subsection*{%s}\n' % group_name)
         for number in range(1, self.number_of_variations+1):
             print(number)  # !!!
             variation = '\n\n\\textbf{%s}\\\\\n' %\
-                        dictionary['variation'] % number
+                        _('Variation %d') % number
             text.append(variation)
             exercise_number = 1
             for item in group[1:]:
@@ -256,7 +228,7 @@ def frame(text,
     It makes preambulum and \\begin{document}... """
 
     preamble_text = []
-    preamble_text.append(dictionary['doctype comment'])
+    preamble_text.append(_('''% The value of \\doctype can be: testpaper, plain és draft.\n'''))
     preamble_text.append('\\newcommand{\doctype}{%s}\n' % doc_type)
 
     preamble_text.append('''
@@ -664,7 +636,7 @@ class VarExercise:
 
                 number_of_uncomputable_formulas += 1
                 if number_of_uncomputable_formulas == len(compute_list):
-                    error('uncomputable', self.code)
+                    raise UncomputableError(self.code)
                     self.is_computable = False
                     return
                 continue

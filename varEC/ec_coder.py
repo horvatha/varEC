@@ -10,6 +10,7 @@ Horváth Árpád, 2001. szeptember'''
 from __future__ import print_function
 
 from varEC.message import error
+from .common import _
 
 # You may write new row after these
 # or put the item you need to the end of this queue.
@@ -55,7 +56,7 @@ def new_codes(codelist=[],
 
     print('** file_name = %s' % file)
     if not os.path.isfile(file):
-        print("There's no file named %s." % file)
+        print(_("There's no file named %s.") % file)
         return
     f = open(file, 'r')
     lines = f.readlines()
@@ -84,7 +85,7 @@ def new_codes(codelist=[],
                     error('code run out')
                     return codelist
             new_lines.append(beginfeladat.sub(newpattern % code, line))
-            print('\tnew code number: %d' % code)
+            print(_('\tnew code number: %d') % code)
             codelist.append(code)
             path, basefile = os.path.split(file)
             write_logfile(code, basefile, path)
@@ -93,13 +94,13 @@ def new_codes(codelist=[],
             new_lines.append(line)
 
     if change == 0:
-        print('\tThere wasn\'t any changes in this file.')
+        print(_('\tThere wasn\'t any changes in this file.'))
         return codelist
 
     if (not archive_file) or (archive_file == file):
         path, basename = os.path.split(file)
         archive_file = os.path.join(path, 'old_' + basename)
-    print('\tThere was %d changes in this file.' % change)
+    print(_('\tThere was %d changes in this file.') % change)
 
     if os.path.islink(file):
         shutil.copyfile(file, archive_file)
@@ -112,7 +113,7 @@ def new_codes(codelist=[],
     f = open(file, 'w')
     f.writelines(new_lines)
     f.close()
-    print('!\tThe new file is in %s\n!\tthe original is in %s.'
+    print(_('!\tThe new file is in %s\n!\tthe original is in %s.')
           % (file, archive_file))
 
     return codelist
@@ -155,12 +156,12 @@ def main():
     '''Makes new codes for the files in the input_files in a FILE_GROUP.
     input_files can be a file name or a file name list
     FILE_GROUP is constant at the beginning of this file.'''
-    print('Book Shelf="%s"' % FILE_GROUP)
-    print('If it isn\'t good, '
-          'set it in the bin/setup_hu.py file (at the beginning).')
-    answer = input('May I continue? (Y/n) ')
+    print(_('Book Shelf="%s"') % FILE_GROUP)
+    print(_('If it isn\'t good, '
+          'set it in the bin/setup_hu.py file (at the beginning).'))
+    answer = input(_('May I continue? (Y/n) '))
     if answer in ('n', 'N'):
-        print('Good bye!')
+        print(_('Good bye!'))
         return
     from varEC import books
 
@@ -170,22 +171,22 @@ def main():
     if isinstance(input_files, str):
         input_files = [input_files]
 
-    print('The files of this Book Shelf are: %s' % ", ".join(input_files))
+    print(_('The files of this Book Shelf are: %s') % ", ".join(input_files))
 
     books = books.Books(input_files)
     codelist = books.codelist()
-    print("There are {exercises} exercises "
-          "in the {books} Exercise Books of this Book Shelf."
+    print(_("There are {exercises} exercises "
+          "in the {books} Exercise Books of this Book Shelf.")
           .format(exercises=len(codelist), books=len(books.books)))
     integer_codes = [c for c in codelist if isinstance(c, int)]
-    print("Code list:", integerlist.IntegerList(integer_codes))
+    print(_("Code list:"), integerlist.IntegerList(integer_codes))
     not_unique_codes = integerlist.IntegerList(
         integerlist.search_not_uniq(integer_codes).keys()
     )
     if not_unique_codes:
-        print("Not unique codes:", not_unique_codes)
+        print(_("Not unique codes:"), not_unique_codes)
     for code in not_unique_codes:
-        print("I have found code {} here:".format(code))
+        print(_("I have found code {} here:").format(code))
         places_of_code(books, code)
 
     for file in input_files:
@@ -194,6 +195,6 @@ def main():
         if _whole_name:
             codelist = new_codes(codelist, _whole_name)
         else:
-            print("There is not file named %s." % file)
+            print(_("There is not file named %s.") % file)
 
         checksolution(_whole_name)

@@ -19,7 +19,7 @@ def name_with_path(file, file_paths): --> occurence_list
 
 from .lang_hu import env
 from .setup_hu import file_paths
-from .message import error, message, print_text
+from .message import error, print_text
 
 import re
 import os

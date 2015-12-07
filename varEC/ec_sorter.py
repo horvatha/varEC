@@ -154,19 +154,18 @@ horvath.arpad@amk.uni-obuda.hu
 """
 
 import sys
-sys.path.append('./bin')
-# if sys.version[:1] < '2':
-#     error('version')
+assert sys.version_info.major == 3, "varEC works with Python version 3"
 
-# It is a module which analyses list of integers
 from varEC import integerlist
+from .common import BadCodeException, CodeNotFoundError
+from .common import _
 
 import os
 import getopt
 
 from varEC import varexercise
 
-from varEC.lang import lang, mesg, dictionary
+from varEC.lang import lang
 try:
     exec('from varEC.setup_%s import *' % lang)
 except ImportError:
@@ -174,12 +173,12 @@ except ImportError:
     from varEC.setup_en import *
 
 
-from varEC.message import error, message, get_integer
+from varEC.message import error, message
 
 from varEC.books import Books
 
 ##########################################
-#  Classes
+#  Options
 ##########################################
 
 
@@ -239,27 +238,30 @@ def test_exercise_numbers():
 
     int_codelist = [x for x in books.codelist if isinstance(x, int)]
 
-    message('file_names')
+    message(_('1. The next files are in this group:'))
     for file in files.input:
         print("\t%s" % file)
 
-    message('intervals')
+    message(_('\n2. Intervals of exercise codes'
+                  '(pl. 12..14 means: 12, 13, 14):'))
     integerlist.print_intervals(int_codelist)
 
-    message('not_uniq_main')
-    num = integerlist.print_not_uniq(int_codelist, mesg['not_uniq'])
+    message(_('\n3. Not uniq exercise codes I found:'))
+    num = integerlist.print_not_uniq(
+        int_codelist,
+        _('%d times is the code %d!'))
     if num == 0:
-        message('none')
+        message(_('None.'))
 
     # If there are bad arguments (which is not integer)
     # writes them.
-    message('bad_arg_main')
+    message(_('\n4. Bad arguments:'))
     bad_list = books.exercises_with_bad_arguments()
     if len(bad_list) > 0:
-        for file_name, row, argument in bad_list:
-            error('bad_arg', (file_name, row, argument))
+        for file_name, row, code in bad_list:
+            raise BadCodeException(file_name, row, code)
     else:
-        message('none')
+        message(_('None.'))
     print()
 
 
@@ -272,16 +274,18 @@ def translate(file):
     Returns with the names of the generated files.
     """
 
+    change_format_4a5 = _('I changed the format '
+                          'to %s because of the pagestyles 4a5!')
     new_files = []
     filename = file.name
     file0 = os.path.splitext(filename)[0]
     if page == '4a5':
         if make.format == 'pdflatex':
             make.format = "pdf"
-            message("change because 4a5", "pdf")
+            message(change_format_4a5 % "pdf")
         if make.format == 'dvi':
             make.format = "ps"
-            message("change because 4a5", "ps")
+            message(change_format_4a5 % "ps")
     if make.format in ['dvi', 'ps', 'pdf']:
         os.system('latex %s' % filename)
         new_files.append("%s.dvi" % file0)
@@ -321,7 +325,7 @@ def get_ordered_codes(exercise_numbers):
     return codes
 
 ################################
-#    Main programm
+#    Main program
 ################################
 
 
@@ -366,15 +370,6 @@ def get_pagesize(page):
     return pagesize, solution_pagesize, list_pagesize
 
 
-def get_number_of_variations(num, max_=100, min_=0):
-    try:
-        number_of_variations = int(num)
-    except ValueError:
-        number_of_variations = -1  # Not valid value. It will be asked.
-    if not min_ <= number_of_variations <= max_:
-        number_of_variations = get_integer('testpapers num', max=max_, min=min_)
-    return number_of_variations
-
 output_tex_files = OutputFiles()
 
 
@@ -385,7 +380,7 @@ def save_file(text, parameters, file_name, is_4a5=False):
     )
     output_tex_files.append(file_name, is_4a5)
     if options.verbose > 0:
-        message('file opened', file_name)
+        message(_('I\'ve opened the file "%s".\n') % file_name)
     with open(file_name, 'w') as f:
         f.writelines(framed_text)
 
@@ -398,16 +393,19 @@ def make_testpapers(solution_file=True):
     )
 
     codes = get_ordered_codes(exercise_numbers)
-    number_of_variations = get_number_of_variations(variations.num)
+    number_of_variations = variations.num
+    assert isinstance(number_of_variations, int) and number_of_variations >= 0
 
     global exercise_numbers
-    variation = varexercise.Variations(
-        exercise_numbers,
-        files.input,
-        number_of_variations
-    )
-    if not variation.all_code_exists:
-        error('codes missing')
+    try:
+        variation = varexercise.Variations(
+            exercise_numbers,
+            files.input,
+            number_of_variations
+        )
+    except CodeNotFoundError:
+        message(_("Not all the exercise codes exists on the books "
+                  "that was listed in the test paper."))
         return
     base_name, extension = os.path.splitext(files.output)
 
@@ -464,19 +462,21 @@ def make_testpapers(solution_file=True):
             file_name = "%s_list.tex" % base_name
             save_file(text, parameters, file_name)
 
-    message('wrote files', output_tex_files)
+    wrote_files_message = _('I wrote the files:\n %s\n')
+    message(wrote_files_message % output_tex_files)
 
     other_output_files = OutputFiles()  # Non-tex files.
     if make.format == '0':
         make.format = 0
     if output_tex_files.list and make.format:
-        message('translate')
+        message(_('I will translate the files. It will take a while.\n'))
         for file in output_tex_files.list:
             new_files = translate(file)
             other_output_files.extend(new_files)
 
     print('\n')
-    message('wrote files', "%s%s" % (output_tex_files, other_output_files))
+    message(wrote_files_message %
+                ("%s%s" % (output_tex_files, other_output_files)))
 
 
 def _make_testpapers_test():
@@ -514,7 +514,7 @@ def main():
             print(__doc__)
         return
 
-    message('foreword')
+    message(_('''Have a good work. www.arek.uni-obuda.hu/harp/ec'''))
 
     make_testpapers()
 
@@ -526,3 +526,4 @@ def _group_test():
     print(books)
     for book in books.books:
         book.print_groups()
+    return books
