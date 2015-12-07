@@ -1,0 +1,159 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR ORGANIZATION
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2015-12-07 12:16+CET\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: pygettext.py 1.5\n"
+
+
+#: /home/ha/repo/varEC/varEC/common.py:32
+msgid "There is a bad code in file {file_name} in row {row}: \"{code}\" Code must be integer."
+msgstr ""
+
+#: /home/ha/repo/varEC/varEC/common.py:45
+msgid "Code %d can not be found."
+msgstr ""
+
+#: /home/ha/repo/varEC/varEC/ec_coder.py:59
+msgid "There's no file named %s."
+msgstr ""
+
+#: /home/ha/repo/varEC/varEC/ec_coder.py:88
+msgid "\tnew code number: %d"
+msgstr ""
+
+#: /home/ha/repo/varEC/varEC/ec_coder.py:97
+msgid "\tThere wasn't any changes in this file."
+msgstr ""
+
+#: /home/ha/repo/varEC/varEC/ec_coder.py:103
+msgid "\tThere was %d changes in this file."
+msgstr ""
+
+#: /home/ha/repo/varEC/varEC/ec_coder.py:116
+msgid ""
+"!\tThe new file is in %s\n"
+"!\tthe original is in %s."
+msgstr ""
+
+#: /home/ha/repo/varEC/varEC/ec_coder.py:159
+msgid "Book Shelf=\"%s\""
+msgstr ""
+
+#: /home/ha/repo/varEC/varEC/ec_coder.py:160
+msgid "If it isn't good, set it in the bin/setup_hu.py file (at the beginning)."
+msgstr ""
+
+#: /home/ha/repo/varEC/varEC/ec_coder.py:162
+msgid "May I continue? (Y/n) "
+msgstr ""
+
+#: /home/ha/repo/varEC/varEC/ec_coder.py:164
+msgid "Good bye!"
+msgstr ""
+
+#: /home/ha/repo/varEC/varEC/ec_coder.py:174
+msgid "The files of this Book Shelf are: %s"
+msgstr ""
+
+#: /home/ha/repo/varEC/varEC/ec_coder.py:178
+msgid "There are {exercises} exercises in the {books} Exercise Books of this Book Shelf."
+msgstr ""
+
+#: /home/ha/repo/varEC/varEC/ec_coder.py:182
+msgid "Code list:"
+msgstr ""
+
+#: /home/ha/repo/varEC/varEC/ec_coder.py:187
+msgid "Not unique codes:"
+msgstr ""
+
+#: /home/ha/repo/varEC/varEC/ec_coder.py:189
+msgid "I have found code {} here:"
+msgstr ""
+
+#: /home/ha/repo/varEC/varEC/ec_coder.py:198
+msgid "There is not file named %s."
+msgstr ""
+
+#: /home/ha/repo/varEC/varEC/ec_sorter.py:241
+msgid "1. The next files are in this group:"
+msgstr ""
+
+#: /home/ha/repo/varEC/varEC/ec_sorter.py:245
+msgid ""
+"\n"
+"2. Intervals of exercise codes(pl. 12..14 means: 12, 13, 14):"
+msgstr ""
+
+#: /home/ha/repo/varEC/varEC/ec_sorter.py:249
+msgid ""
+"\n"
+"3. Not uniq exercise codes I found:"
+msgstr ""
+
+#: /home/ha/repo/varEC/varEC/ec_sorter.py:252
+msgid "%d times is the code %d!"
+msgstr ""
+
+#: /home/ha/repo/varEC/varEC/ec_sorter.py:254
+#: /home/ha/repo/varEC/varEC/ec_sorter.py:264
+msgid "None."
+msgstr ""
+
+#: /home/ha/repo/varEC/varEC/ec_sorter.py:258
+msgid ""
+"\n"
+"4. Bad arguments:"
+msgstr ""
+
+#: /home/ha/repo/varEC/varEC/ec_sorter.py:277
+msgid "I changed the format to %s because of the pagestyles 4a5!"
+msgstr ""
+
+#: /home/ha/repo/varEC/varEC/ec_sorter.py:383
+msgid ""
+"I've opened the file \"%s\".\n"
+msgstr ""
+
+#: /home/ha/repo/varEC/varEC/ec_sorter.py:407
+msgid "Not all the exercise codes exists on the books that was listed in the test paper."
+msgstr ""
+
+#: /home/ha/repo/varEC/varEC/ec_sorter.py:465
+msgid ""
+"I wrote the files:\n"
+" %s\n"
+msgstr ""
+
+#: /home/ha/repo/varEC/varEC/ec_sorter.py:472
+msgid ""
+"I will translate the files. It will take a while.\n"
+msgstr ""
+
+#: /home/ha/repo/varEC/varEC/ec_sorter.py:517
+msgid "Have a good work. www.arek.uni-obuda.hu/harp/ec"
+msgstr ""
+
+#: /home/ha/repo/varEC/varEC/varexercise.py:182
+msgid "Group %s"
+msgstr ""
+
+#: /home/ha/repo/varEC/varEC/varexercise.py:187
+msgid "Variation %d"
+msgstr ""
+
+#: /home/ha/repo/varEC/varEC/varexercise.py:247
+msgid ""
+"% The value of \\doctype can be: testpaper, plain és draft.\n"
+msgstr ""
+

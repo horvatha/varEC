@@ -1,0 +1,180 @@
+# Copyright (C) 2015, Arpad Horvath
+#
+# , 2015.
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: 2015-12-07 12:16+CET\n"
+"PO-Revision-Date: 2015-12-07 12:18+0100\n"
+"Last-Translator: Arpad Horvath <horvath.arpad.szfvar@gmail.com>\n"
+"Language-Team: American English <kde-i18n-doc@kde.org>\n"
+"Language: hu_HU\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: pygettext.py 1.5\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 1.5.4\n"
+
+#: /home/ha/repo/varEC/varEC/common.py:32
+msgid ""
+"There is a bad code in file {file_name} in row {row}: \"{code}\" Code must "
+"be integer."
+msgstr ""
+"Hibás kód van a(z) {file_name} {row}. sorában: \"{code}\" A kódnak egésznek "
+"kell lennie."
+
+#: /home/ha/repo/varEC/varEC/common.py:45
+msgid "Code %d can not be found."
+msgstr "Nem található a %d feladatkód."
+
+#: /home/ha/repo/varEC/varEC/ec_coder.py:59
+msgid "There's no file named %s."
+msgstr "Nincs %s nevű fájl."
+
+#: /home/ha/repo/varEC/varEC/ec_coder.py:88
+msgid "\tnew code number: %d"
+msgstr "\túj feladatkódszám: %d"
+
+#: /home/ha/repo/varEC/varEC/ec_coder.py:97
+msgid "\tThere wasn't any changes in this file."
+msgstr "\tNem történt változás ebben a fájlban."
+
+#: /home/ha/repo/varEC/varEC/ec_coder.py:103
+msgid "\tThere was %d changes in this file."
+msgstr "\t%d változás ebben a fájlban."
+
+#: /home/ha/repo/varEC/varEC/ec_coder.py:116
+msgid ""
+"!\tThe new file is in %s\n"
+"!\tthe original is in %s."
+msgstr ""
+"!\tAz új fájl itt található: %s\n"
+"!\taz eredeti pedig itt: %s."
+
+#: /home/ha/repo/varEC/varEC/ec_coder.py:159
+msgid "Book Shelf=\"%s\""
+msgstr "Könyvespolc=\"%s\""
+
+#: /home/ha/repo/varEC/varEC/ec_coder.py:160
+msgid ""
+"If it isn't good, set it in the bin/setup_hu.py file (at the beginning)."
+msgstr "Ha nem megfelelő, állítsa be a bin/setup_hu.py elején."
+
+#: /home/ha/repo/varEC/varEC/ec_coder.py:162
+msgid "May I continue? (Y/n) "
+msgstr "Folytassam? (I/n) "
+
+#: /home/ha/repo/varEC/varEC/ec_coder.py:164
+msgid "Good bye!"
+msgstr "Viszont látásra!"
+
+#: /home/ha/repo/varEC/varEC/ec_coder.py:174
+msgid "The files of this Book Shelf are: %s"
+msgstr "Az aktuális könyvespolc fájljai: %s"
+
+#: /home/ha/repo/varEC/varEC/ec_coder.py:178
+msgid ""
+"There are {exercises} exercises in the {books} Exercise Books of this Book "
+"Shelf."
+msgstr "{exercises} feladat a könyvespolc {books} könyvében."
+
+#: /home/ha/repo/varEC/varEC/ec_coder.py:182
+msgid "Code list:"
+msgstr "Feladatkódok listája:"
+
+#: /home/ha/repo/varEC/varEC/ec_coder.py:187
+msgid "Not unique codes:"
+msgstr "Többször használt kódok:"
+
+#: /home/ha/repo/varEC/varEC/ec_coder.py:189
+msgid "I have found code {} here:"
+msgstr "Itt találtam meg a {} feladatkódot:"
+
+#: /home/ha/repo/varEC/varEC/ec_coder.py:198
+msgid "There is not file named %s."
+msgstr "Nincs %s nevű fájl."
+
+#: /home/ha/repo/varEC/varEC/ec_sorter.py:241
+msgid "1. The next files are in this group:"
+msgstr "1. A következő fájlok ebben a csoportban vannak:"
+
+#: /home/ha/repo/varEC/varEC/ec_sorter.py:245
+msgid ""
+"\n"
+"2. Intervals of exercise codes(pl. 12..14 means: 12, 13, 14):"
+msgstr ""
+"\n"
+"2. A feladatkódok intervallumai (pl. 12..14 jelentése: 12, 13, 14):"
+
+#: /home/ha/repo/varEC/varEC/ec_sorter.py:249
+msgid ""
+"\n"
+"3. Not uniq exercise codes I found:"
+msgstr ""
+"\n"
+"3. Többször használt kódok:"
+
+#: /home/ha/repo/varEC/varEC/ec_sorter.py:252
+msgid "%d times is the code %d!"
+msgstr "%d alkalommal van a kód: %d!"
+
+#: /home/ha/repo/varEC/varEC/ec_sorter.py:254
+#: /home/ha/repo/varEC/varEC/ec_sorter.py:264
+msgid "None."
+msgstr "Nincs."
+
+#: /home/ha/repo/varEC/varEC/ec_sorter.py:258
+msgid ""
+"\n"
+"4. Bad arguments:"
+msgstr ""
+"\n"
+"4. Hibás argumentumok:"
+
+#: /home/ha/repo/varEC/varEC/ec_sorter.py:277
+msgid "I changed the format to %s because of the pagestyles 4a5!"
+msgstr "%s-re változtattam a formátumot, a 4a5 oldalstílus miatt!"
+
+#: /home/ha/repo/varEC/varEC/ec_sorter.py:383
+msgid "I've opened the file \"%s\".\n"
+msgstr "Kiírtam a következő fájlt: \"%s\".\n"
+
+#: /home/ha/repo/varEC/varEC/ec_sorter.py:407
+msgid ""
+"Not all the exercise codes exists on the books that was listed in the test "
+"paper."
+msgstr ""
+"Nem minden feladatkód szerepel a könyvekben, amelyek a feladatlapon "
+"szerepelnek."
+
+#: /home/ha/repo/varEC/varEC/ec_sorter.py:465
+msgid ""
+"I wrote the files:\n"
+" %s\n"
+msgstr ""
+"Kiírtam a következő fájlokat:\n"
+" %s\n"
+
+#: /home/ha/repo/varEC/varEC/ec_sorter.py:472
+msgid "I will translate the files. It will take a while.\n"
+msgstr "Lefordítom a fájlokat. Ez eltarthat egy darabig.\n"
+
+#: /home/ha/repo/varEC/varEC/ec_sorter.py:517
+msgid "Have a good work. www.arek.uni-obuda.hu/harp/ec"
+msgstr "Jó munkát! www.arek.uni-obuda.hu/harp/ec"
+
+#: /home/ha/repo/varEC/varEC/varexercise.py:182
+msgid "Group %s"
+msgstr "%s csoport"
+
+#: /home/ha/repo/varEC/varEC/varexercise.py:187
+msgid "Variation %d"
+msgstr "%d. variáció"
+
+#: /home/ha/repo/varEC/varEC/varexercise.py:247
+msgid "% The value of \\doctype can be: testpaper, plain és draft.\n"
+msgstr "% A \\doctype értéke lehet: testpaper, plain és draft.\n"
+
+#~ msgid "Bad exercise code at row %d"
+#~ msgstr "Hibás feladatkód a %d. sorban"
