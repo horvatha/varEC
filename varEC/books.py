@@ -17,9 +17,10 @@ def name_with_path(file, file_paths): --> occurence_list
 
 """
 
-from .lang_hu import env
+from .lang import env
 from .setup_hu import file_paths
-from .message import error, print_text
+from .message import print_text
+from .common import BadCodeException
 
 import re
 import os
@@ -274,8 +275,7 @@ class ExerciseBook:
                         exercise.code = int(raw_code)
                     except ValueError:
                         exercise.code = raw_code
-                        error('bad_arg', (self.file_name, row, exercise.code))
-                        print()
+                        raise BadCodeException(self.file_name, exercise.code, row)
                     if is_in_group:
                         group_env.exercises.append(exercise.code)
                     state = 'in exercise'

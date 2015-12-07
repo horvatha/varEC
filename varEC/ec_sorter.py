@@ -173,7 +173,7 @@ except ImportError:
     from varEC.setup_en import *
 
 
-from varEC.message import error, message
+from varEC.message import message
 
 from varEC.books import Books
 

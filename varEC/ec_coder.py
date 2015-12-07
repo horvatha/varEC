@@ -9,7 +9,6 @@ python bin/ec-coder.py
 Horváth Árpád, 2001. szeptember'''
 from __future__ import print_function
 
-from varEC.message import error
 from .common import _
 
 # You may write new row after these
@@ -82,7 +81,7 @@ def new_codes(codelist=[],
             while code in codelist:
                 code += 1
                 if code >= code_interval[1]:
-                    error('code run out')
+                    print(_('There is no free code number! Ask for it!\n<horvath.arpad@amk.uni-obuda.hu>'))
                     return codelist
             new_lines.append(beginfeladat.sub(newpattern % code, line))
             print(_('\tnew code number: %d') % code)

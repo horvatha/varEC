@@ -2,23 +2,23 @@
 ## lang can be
 ## en        = english
 ## hu        = hungarian
-from __future__ import print_function
+
+import sys
 
 lang = 'en'
 lang = 'hu'
 
+env = {
+    'exercise': 'exercise',
+    'solution': 'solution',
+    'group': 'exercisegroup'}
 
-import sys
-sys.path.append('./bin')
 if lang in [ 'magyar', 'hu']:
-    from .lang_hu import *
     preamble_file = "magyarpreambulum"
-
+    env = {'exercise':'feladat',
+        'solution':'megold',
+        'group'   :'feladatcsoport'}
 elif lang in ['english', 'en']:
-    from .lang_en import *
     preamble_file = "preamble"
-
 else:
-    print('No good settings for language in lang.py, I use Hungarian language.')
-    from .lang_hu import *
-    preamble_file = "magyarpreambulum"
+    ValueError('No good settings for language in lang.py, I use Hungarian language.')
