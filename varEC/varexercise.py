@@ -239,7 +239,7 @@ def frame(text,
 
     if wide:
         preamble_text.append(r"""\voffset -1. cm
-\textheight 24cm
+\textheight 23.4cm
 \hoffset -1.2 cm
 \textwidth 17cm
 \headheight -3. cm
