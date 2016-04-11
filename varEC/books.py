@@ -275,7 +275,9 @@ class ExerciseBook:
                         exercise.code = int(raw_code)
                     except ValueError:
                         exercise.code = raw_code
-                        raise BadCodeException(self.file_name, exercise.code, row)
+                        if raw_code != "":  # TODO Find a better solution.
+                            raise BadCodeException(
+                                self.file_name, exercise.code, row)
                     if is_in_group:
                         group_env.exercises.append(exercise.code)
                     state = 'in exercise'
