@@ -1,5 +1,6 @@
+textdomain = '/home/ha/repo/varEC/locale'
 import gettext
-gettext.bindtextdomain('varEC', '/home/ha/repo/varEC/locale')
+gettext.bindtextdomain('varEC', textdomain)
 gettext.textdomain('varEC')
 _ = gettext.gettext
 

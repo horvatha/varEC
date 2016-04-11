@@ -31,58 +31,53 @@ import time
 from varEC import lang
 
 
-def whole_name(file):
+def get_whole_name(file):
     file_names = name_with_path(file, file_paths)
     if file_names:
         return file_names[0]
     return None
 
 
-def not_integer(string):
-    try:
-        int(string)
-    except ValueError:
-        return 1
-    return 0
+def get_next_code(codelist, code_interval):
+    start, stop = code_interval
+    code = start
+    while code in codelist:
+        code += 1
+        if code >= stop:
+            raise ValueError(_(
+                'There is no free code number! Ask for it!\n'
+                '<horvath.arpad@amk.uni-obuda.hu>'))
+    return code
 
 
 # TODO Should use ExerciseBook.bad_arguments_row_and_argument()
-def new_codes(codelist=[],
-              file=None,
-              code_interval=code_interval,
-              archive_file=None):
+def new_codes(codelist, file, code_interval=code_interval):
     'Makes new codes for one file in the FILE_GROUP.'
 
     print('** file_name = %s' % file)
     if not os.path.isfile(file):
         print(_("There's no file named %s.") % file)
         return
-    f = open(file, 'r')
-    lines = f.readlines()
-    f.close()
+    with open(file, 'r') as f:
+        lines = f.readlines()
 
     # new lines
     new_lines = []
 
     beginfeladat = re.compile(r'''(\\ begin \s* \{ \s* feladat \s* }
              \{) (.*?) } \s*  ([^\s])?''', re.VERBOSE)
-    code = code_interval[0]
     change = 0
     for line in lines:
         begin = re.search(beginfeladat, line)
-        if begin and not_integer(begin.group(2)):
+        if begin and not isinstance(begin.group(2), int):
             # if there is something after the code number
             if begin.group(3):
-                newpattern = r'\g<1>%d}\n\g<3>'
+                newpattern = r'\g<1>%d}  \g<3>\n'
             else:
                 # if there is nothing after the code number
                 newpattern = r'\g<1>%d}\n'
             change += 1  # One more changes
-            while code in codelist:
-                code += 1
-                if code >= code_interval[1]:
-                    print(_('There is no free code number! Ask for it!\n<horvath.arpad@amk.uni-obuda.hu>'))
-                    return codelist
+            code = get_next_code(codelist, code_interval)
             new_lines.append(beginfeladat.sub(newpattern % code, line))
             print(_('\tnew code number: %d') % code)
             codelist.append(code)
@@ -96,9 +91,8 @@ def new_codes(codelist=[],
         print(_('\tThere wasn\'t any changes in this file.'))
         return codelist
 
-    if (not archive_file) or (archive_file == file):
-        path, basename = os.path.split(file)
-        archive_file = os.path.join(path, 'old_' + basename)
+    path, basename = os.path.split(file)
+    archive_file = os.path.join(path, 'old_' + basename)
     print(_('\tThere was %d changes in this file.') % change)
 
     if os.path.islink(file):
@@ -109,9 +103,8 @@ def new_codes(codelist=[],
         file = os.path.abspath(link)
     else:
         os.rename(file, archive_file)
-    f = open(file, 'w')
-    f.writelines(new_lines)
-    f.close()
+    with open(file, 'w') as f:
+        f.writelines(new_lines)
     print(_('!\tThe new file is in %s\n!\tthe original is in %s.')
           % (file, archive_file))
 
@@ -188,12 +181,20 @@ def main():
         print(_("I have found code {} here:").format(code))
         places_of_code(books, code)
 
-    for file in input_files:
-        _whole_name = whole_name(file)
-        # print("_whole_name:", _whole_name)
-        if _whole_name:
-            codelist = new_codes(codelist, _whole_name)
+    bad_args = books.exercises_with_bad_arguments()
+    if bad_args:
+        print(_("Bad arguments are in the files below:"))
+        for tuple_ in bad_args:
+            print(_("In file {} in the row {}"
+                    " the argument is '{}'".format(*tuple_)))
+
+    for file in books.files_with_bad_arguments():
+        whole_name = get_whole_name(file)
+        if whole_name:
+            codelist = new_codes(codelist, whole_name)
         else:
             print(_("There is not file named %s.") % file)
 
-        checksolution(_whole_name)
+    for file in input_files:
+        whole_name = get_whole_name(file)
+        checksolution(whole_name)

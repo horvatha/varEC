@@ -20,10 +20,16 @@ def name_with_path(file, file_paths): --> occurence_list
 from .lang import env
 from .setup_hu import file_paths
 from .message import print_text
-from .common import BadCodeException
+from .common import textdomain
+
+import gettext
+gettext.bindtextdomain('varEC', textdomain)
+gettext.textdomain('varEC')
+_ = gettext.gettext
 
 import re
 import os
+import warnings
 
 
 def name_with_path(file, directories):
@@ -45,10 +51,6 @@ def read_files_lines_or_empty_list(file):
     with open(file) as f:
         lines = f.readlines()
     return lines
-
-
-def _name_with_path_test(file):
-    print(name_with_path(file, ['.', '../matematika_hu', '../zh']))
 
 
 class Place:
@@ -121,7 +123,7 @@ class Books:
         return str
 
     def get_books(self):
-        "Get the date of the books at initialization."
+        "Get the data of the books at initialization."
         for file_name in self.file_names:
             self.books.append(
                 ExerciseBook(file_name, file_type=self.file_type)
@@ -159,7 +161,7 @@ class Books:
         return exercise_list
 
     def exercises_with_bad_arguments(self):
-        """ Returns with a list of the tuple (filename, row, argument). """
+        """ Return a list of the tuple (filename, row, argument). """
         exercise_list = []
         for book in self.books:
             delta_list = [
@@ -168,6 +170,9 @@ class Books:
             ]
             exercise_list.extend(delta_list)
         return exercise_list
+
+    def files_with_bad_arguments(self):
+        return set(file for file, _, _ in self.exercises_with_bad_arguments())
 
     def definitions(self, codes=None):
         """ Returns with the definitions in all the books
@@ -245,7 +250,7 @@ class ExerciseBook:
         elif self.type == 'exercise series':
             sectionp = re.compile(r'\\section\*?\s*\{([^}]*)}', re.VERBOSE)
         else:
-            raise TypeError('bad Structure type')
+            raise TypeError('Bad structure type')
 
         state = 'not in exercise'
         exercise_number = 0
@@ -275,9 +280,14 @@ class ExerciseBook:
                         exercise.code = int(raw_code)
                     except ValueError:
                         exercise.code = raw_code
-                        if raw_code != "":  # TODO Find a better solution.
-                            raise BadCodeException(
-                                self.file_name, exercise.code, row)
+                        warnings.warn(_(
+                            'There is a bad code in file {file_name}'
+                            ' in row {row}: "{code}"'
+                            ' Code must be integer.').format(
+                                row=row,
+                                code=exercise.code,
+                                file_name=self.file_name)
+                        )
                     if is_in_group:
                         group_env.exercises.append(exercise.code)
                     state = 'in exercise'
@@ -330,13 +340,6 @@ class ExerciseBook:
     def bad_arguments_row_and_argument(self):
         return [(ex.begin.row, ex.code) for ex in self.exercises
                 if not isinstance(ex.code, int)]
-
-    def test(self):
-        ex = self.exercises[1]
-        print('Exercise %d' % ex.code)
-        print_text(self.exercise_text(ex.code))
-        print(ex)
-        print
 
     def exercise_text(self, code, solution=True):
         """ Returns with the text of the exercise.
