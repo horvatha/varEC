@@ -25,7 +25,7 @@ def main():
     code = int(sys.argv[-1])
     group = get_group()
     locals_ = {}
-    exec('from varEC.%s import input_files' % group, globals(), locals_)
+    exec('from varEC.courses.%s import input_files' % group, globals(), locals_)
     input_files = locals_['input_files']
     print('input files:\n  ', end='')
     print(*input_files, sep='\n  ', end='\n\n')

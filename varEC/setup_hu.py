@@ -15,12 +15,12 @@ from varEC import gadgets
 # I will use varEC/{FILE_GROUP}.py as settings file.
 FILE_GROUP = 'villanytan'
 FILE_GROUP = 'halozatok'
-FILE_GROUP = 'mat'
 FILE_GROUP = 'hiradastechnika'
 FILE_GROUP = 'villamos_energetika'
+FILE_GROUP = 'informatika'
 FILE_GROUP = 'fizika'
 FILE_GROUP = 'szamtudmat'
-FILE_GROUP = 'informatika'
+FILE_GROUP = 'mat'
 
 code_interval = (1, 10000)
 
@@ -50,7 +50,7 @@ exercise_numbers = []  # It is just for preventing Syntax Warning
 # Next line usually imports:
 # input_files, exercise_numbers, date, inst, title, course, num
 # It may import class_argument and babel_lang too.
-exec('from .%s import *' % FILE_GROUP)
+exec('from .courses.%s import *' % FILE_GROUP)
 if isinstance(input_files, str):
     input_files = input_files.split()
 

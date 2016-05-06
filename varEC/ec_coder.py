@@ -50,15 +50,19 @@ def get_next_code(codelist, code_interval):
     return code
 
 
-# TODO Should use ExerciseBook.bad_arguments_row_and_argument()
-def new_codes(codelist, file, code_interval=code_interval):
-    'Makes new codes for one file in the FILE_GROUP.'
+def is_valid_code(code_string):
+    return code_string.isdigit()
 
-    print('** file_name = %s' % file)
-    if not os.path.isfile(file):
-        print(_("There's no file named %s.") % file)
+
+# TODO Should use ExerciseBook.bad_arguments_row_and_argument()
+def new_codes(codelist, file_name, code_interval=code_interval):
+    'Makes new codes for one file_name in the FILE_GROUP.'
+
+    print('** file_name = %s' % file_name)
+    if not os.path.isfile(file_name):
+        print(_("There's no file named %s.") % file_name)
         return
-    with open(file, 'r') as f:
+    with open(file_name, 'r') as f:
         lines = f.readlines()
 
     # new lines
@@ -67,9 +71,10 @@ def new_codes(codelist, file, code_interval=code_interval):
     beginfeladat = re.compile(r'''(\\ begin \s* \{ \s* feladat \s* }
              \{) (.*?) } \s*  ([^\s])?''', re.VERBOSE)
     change = 0
+    path, basename = os.path.split(file_name)
     for line in lines:
         begin = re.search(beginfeladat, line)
-        if begin and not isinstance(begin.group(2), int):
+        if begin and not is_valid_code(begin.group(2)):
             # if there is something after the code number
             if begin.group(3):
                 newpattern = r'\g<1>%d}  \g<3>\n'
@@ -81,8 +86,7 @@ def new_codes(codelist, file, code_interval=code_interval):
             new_lines.append(beginfeladat.sub(newpattern % code, line))
             print(_('\tnew code number: %d') % code)
             codelist.append(code)
-            path, basefile = os.path.split(file)
-            write_logfile(code, basefile, path)
+            write_logfile(code, basename, path)
 
         else:
             new_lines.append(line)
@@ -91,22 +95,21 @@ def new_codes(codelist, file, code_interval=code_interval):
         print(_('\tThere wasn\'t any changes in this file.'))
         return codelist
 
-    path, basename = os.path.split(file)
     archive_file = os.path.join(path, 'old_' + basename)
     print(_('\tThere was %d changes in this file.') % change)
 
-    if os.path.islink(file):
-        shutil.copyfile(file, archive_file)
-        path, basename = os.path.split(file)
-        link = os.path.join(path, os.readlink(file))
+    if os.path.islink(file_name):
+        shutil.copyfile(file_name, archive_file)
+        path, basename = os.path.split(file_name)
+        link = os.path.join(path, os.readlink(file_name))
         print(link)
-        file = os.path.abspath(link)
+        file_name = os.path.abspath(link)
     else:
-        os.rename(file, archive_file)
-    with open(file, 'w') as f:
+        os.rename(file_name, archive_file)
+    with open(file_name, 'w') as f:
         f.writelines(new_lines)
     print(_('!\tThe new file is in %s\n!\tthe original is in %s.')
-          % (file, archive_file))
+          % (file_name, archive_file))
 
     return codelist
 
@@ -158,7 +161,7 @@ def main():
     from varEC import books
 
     locals_ = {}
-    exec('from varEC.%s import input_files' % FILE_GROUP, locals_)
+    exec('from varEC.courses.%s import input_files' % FILE_GROUP, locals_)
     input_files = locals_.get('input_files')
     if isinstance(input_files, str):
         input_files = [input_files]
