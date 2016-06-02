@@ -175,7 +175,7 @@ except ImportError:
 
 from varEC.message import message
 
-from varEC.books import Books
+from varEC.books import BookShelf
 
 ##########################################
 #  Options
@@ -387,10 +387,7 @@ def save_file(text, parameters, file_name, is_4a5=False):
 
 def make_testpapers(solution_file=True):
 
-    books = Books(
-        files.input,
-        file_type='exercise series'
-    )
+    books = BookShelf(files.input)
 
     codes = get_ordered_codes(exercise_numbers)
     number_of_variations = variations.num
@@ -518,12 +515,3 @@ def main():
 
     make_testpapers()
 
-
-def _group_test():
-    books = Books(
-        ['matematika_hu/analizis.tex', 'matematika_hu/vektor_matrix.tex'],
-        'exercise series')
-    print(books)
-    for book in books.books:
-        book.print_groups()
-    return books

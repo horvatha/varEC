@@ -22,7 +22,7 @@ from .lang import lang
 from .message import print_text
 from varEC import possibilities
 
-from .books import Books
+from .books import BookShelf
 import re
 import random
 import itertools
@@ -74,7 +74,7 @@ class Variations:
         if isinstance(file_names, str):
             file_names = [file_names]
         self.number_of_variations = number_of_variations
-        self.books = Books(file_names)
+        self.books = BookShelf(file_names)
         self.make_varexercises(number_of_variations)
         self.variable_list = None
 

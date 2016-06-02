@@ -202,7 +202,7 @@ class TestFileFunctions(unittest.TestCase):
         self.file_paths = ".. files/ .".split()
         self.old_directory = os.getcwd()
         test_directory = os.path.dirname(__file__)
-        os.chdir(test_directory)
+        os.chdir("." if not test_directory else test_directory)
 
     def tearDown(self):
         os.chdir(self.old_directory)

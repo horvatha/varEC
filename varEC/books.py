@@ -92,16 +92,12 @@ class Exercise:
         return "Exercise {:4} from the row {:4d}.".format(self.code, self.begin.row)
 
 
-class Books:
+class BookShelf:
     """ Class for handle a collection of exercise books."""
-    def __init__(self,
-                 file_names,
-                 file_type='exercise series',
-                 ):
+    def __init__(self, file_names):
         if isinstance(file_names, str):
             file_names = [file_names]
         self.file_names = file_names
-        self.file_type = file_type
         self.books = []
         self.get_books()
 
@@ -115,7 +111,7 @@ class Books:
         "Get the data of the books at initialization."
         for file_name in self.file_names:
             self.books.append(
-                ExerciseBook(file_name, file_type=self.file_type)
+                ExerciseBook(file_name)
             )
 
     def exercise_text(self, code):
