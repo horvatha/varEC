@@ -168,10 +168,10 @@ def main():
 
     print(_('The files of this Book Shelf are: %s') % ", ".join(input_files))
 
-    books = books.Books(input_files)
+    books = books.BookShelf(input_files)
     codelist = books.codelist()
     print(_("There are {exercises} exercises "
-          "in the {books} Exercise Books of this Book Shelf.")
+          "in the {books} Exercise Book on this Bookshelf.")
           .format(exercises=len(codelist), books=len(books.books)))
     integer_codes = [c for c in codelist if isinstance(c, int)]
     print(_("Code list:"), integerlist.IntegerList(integer_codes))
@@ -189,7 +189,7 @@ def main():
         print(_("Bad arguments are in the files below:"))
         for tuple_ in bad_args:
             print(_("In file {} in the row {}"
-                    " the argument is '{}'".format(*tuple_)))
+                    " the argument is '{}'").format(*tuple_))
 
     for file in books.files_with_bad_arguments():
         whole_name = get_whole_name(file)

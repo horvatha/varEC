@@ -6,7 +6,7 @@ so you can test it.
 """
 
 import sys
-from varEC.books import Books
+from varEC.books import BookShelf
 from varEC.varexercise import exercise_test
 
 
@@ -29,6 +29,6 @@ def main():
     input_files = locals_['input_files']
     print('input files:\n  ', end='')
     print(*input_files, sep='\n  ', end='\n\n')
-    books = Books(input_files)
+    books = BookShelf(input_files)
     text = books.exercise_text(code)
     exercise_test(text, variation_number=6, with_latextable=1)
