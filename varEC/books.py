@@ -19,7 +19,6 @@ def name_with_path(file, file_paths): --> occurence_list
 
 from .lang import env
 from .setup_hu import file_paths
-from .message import print_text
 from .common import textdomain
 
 import gettext
@@ -78,15 +77,11 @@ class Interval:
         return str
 
 
-class Environment:
-    """ A class for store the structure of  environment exercise and
- (exercise)group"""
+class Exercise:
+    """ A class for store the structure of exercise"""
 
-    def __init__(self, row, start, end, type='exercise'):
+    def __init__(self, row, start, end):
         self.begin = Place(row, start, end)
-        self.type = type
-        self.num = None
-        self.section_number = None
         if type == 'group':
             self.exercises = []
 
@@ -94,13 +89,7 @@ class Environment:
         self.end = Place(row+1, start, end)
 
     def __str__(self):
-        if self.type == 'exercise':
-            return "Exercise %4s is the %3d-th in section %2d from the row %4d." % \
-                (self.code, self.num, self.section_number, self.begin.row)
-        elif self.type == 'group':
-            intv_num = len(self.exercises)
-            return '//Exercise-group with %d exercises from row %d.//' %\
-                (intv_num, self.begin.row)
+        return "Exercise {:4} from the row {:4d}.".format(self.code, self.begin.row)
 
 
 class Books:
@@ -205,10 +194,9 @@ class ExerciseBook:
 
         self.file_name = file_name
         self.file_paths = file_paths
-        self.type = file_type
+        self.type_ = file_type
+        assert self.type_ in ('testpaper', 'exercise series')
         self.exercises = []
-        self.sections = []  # It can be sections or groups.
-        self.groups = []  # It stores exercisegroup-environments
         text = kwargs.pop('text', [])
         assert not kwargs
         self.lines = self.text_loader(text)
@@ -237,44 +225,15 @@ class ExerciseBook:
             re.VERBOSE)
         endp = re.compile(r"\\end\s*\{\s*"+env['exercise']+r"\s*}", re.VERBOSE)
 
-        groupbeginp = re.compile(r"\\begin\s*\{\s*" + env['group'] + r"\s*}",
-                                 re.VERBOSE)
-        groupendp = re.compile(
-            r"\\end\s*\{\s*"+env['group']+r"\s*}", re.VERBOSE)
-        # intervalp = re.compile(
-        #     r"\\interval\s*(\[\s*([^\]]*)\s*]\s*)?"
-        #     "{\s*([^}]*)\s*}{\s*([^}]*)\s*}")
-
-        if self.type == 'testpaper':
-            sectionp = re.compile(r'\\group \s* \{ ([^}]*) }', re.VERBOSE)
-        elif self.type == 'exercise series':
-            sectionp = re.compile(r'\\section\*?\s*\{([^}]*)}', re.VERBOSE)
-        else:
-            raise TypeError('Bad structure type')
-
         state = 'not in exercise'
-        exercise_number = 0
-        section_number = 0  # Section is testgroup in testpapers.
-        group_number = 0  # The serial number of the group environment.
-        is_in_group = 0
         for row in range(1, len(self.lines)+1):
             line = self.lines[row-1]  # The index of the 1-st row is 0, etc.!
 
             if state == 'not in exercise':
-                # It found a new section
-                section = sectionp.search(line)
-                if section:
-                    self.sections.append(section.group(1))
-                    section_number = section_number + 1
-                    exercise_number = 0
-
                 # It found the begin of an exercise environment
                 begin = beginp.search(line)
                 if begin:
-                    exercise_number = exercise_number + 1
-                    exercise = Environment(row, begin.start(), begin.end())
-                    exercise.num = exercise_number
-                    exercise.section_number = section_number
+                    exercise = Exercise(row, begin.start(), begin.end())
                     raw_code = begin.group(1)
                     try:
                         exercise.code = int(raw_code)
@@ -288,25 +247,7 @@ class ExerciseBook:
                                 code=exercise.code,
                                 file_name=self.file_name)
                         )
-                    if is_in_group:
-                        group_env.exercises.append(exercise.code)
                     state = 'in exercise'
-
-                # It found the begin of an exercise-group environment
-                groupbegin = groupbeginp.search(line)
-                if groupbegin:
-                    is_in_group = 1
-                    group_number = group_number + 1
-                    group_env = Environment(row, groupbegin.start(),
-                                            groupbegin.end(), 'group')
-                groupbegin = groupbeginp.search(line)
-
-                # It found the end of an exercise-group environment
-                groupend = groupendp.search(line)
-                if groupend:
-                    is_in_group = 0
-                    group_env.add_end(row, groupend.start(), groupend.end())
-                    self.groups.append(group_env)
 
             elif state == 'in exercise':
                 start = None
@@ -325,16 +266,9 @@ class ExerciseBook:
                         self.exercises.append(exercise)
                         state = 'not in exercise'
 
-        self.codelist_maker()
+        self.make_codelist()
 
-    def print_groups(self):
-        if not self.groups:
-            print('No groups in "%s".' % self.file_name)
-            return
-        for group in self.groups:
-            print(group.__str__())
-
-    def codelist_maker(self):
+    def make_codelist(self):
         self.code_list = [ex.code for ex in self.exercises]
 
     def bad_arguments_row_and_argument(self):
@@ -376,7 +310,3 @@ class ExerciseBook:
                 else:
                     definition_lines.append(line)
         return definition_lines
-
-
-if __name__ == "__main__":
-    _name_with_path_test("analizis.tex")

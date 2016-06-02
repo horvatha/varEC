@@ -177,16 +177,13 @@ class TestExerciseBook(unittest.TestCase):
             code_set)
         self.assertEqual(len(self.ExerciseBook.exercises), len(code_set))
         first_exercise = self.ExerciseBook.exercises[0]
-        self.assertIsInstance(first_exercise,
-                              books.Environment)
+        self.assertIsInstance(first_exercise, books.Exercise)
         self.assertEqual(first_exercise.begin.row, 2)
         self.assertEqual(first_exercise.begin.start, 0)
-        self.assertEqual(first_exercise.type, 'exercise')
         self.assertEqual(first_exercise.code, 54)
-        self.assertEqual(first_exercise.num, 1)
         self.assertEqual(
             str(first_exercise),
-            'Exercise   54 is the   1-th in section  1 from the row    2.')
+            'Exercise   54 from the row    2.')
 
     def test_definitions_function_get_definitions(self):
         self.assertEqual(self.ExerciseBook.definitions()[0],

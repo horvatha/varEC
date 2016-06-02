@@ -19,8 +19,8 @@ FILE_GROUP = 'hiradastechnika'
 FILE_GROUP = 'villamos_energetika'
 FILE_GROUP = 'informatika'
 FILE_GROUP = 'fizika'
-FILE_GROUP = 'szamtudmat'
 FILE_GROUP = 'mat'
+FILE_GROUP = 'szamtudmat'
 
 code_interval = (1, 10000)
 
