@@ -166,19 +166,19 @@ class Variations:
         group_name = _('Group %s') % group[0]
         text.append('\n\\subsection*{%s}\n' % group_name)
         for number in range(1, self.number_of_variations+1):
-            print(number)  # !!!
+            print("---------", number)  # !!!
             variation = '\n\n\\textbf{%s}\\\\\n' %\
                         _('Variation %d') % number
             text.append(variation)
             exercise_number = 1
             for item in group[1:]:
-                print(' '*5, item)  # !!!
+                #  print(' '*5, item)  # !!!
                 if not isinstance(item, str):
                     latex_plain = item.latex_plain(number)
                     if latex_plain:
                         text.append('%d. ' % exercise_number)
-                        print(' '*5, number)  # !!!
-                        print(' '*5, latex_plain)  # !!!
+                        #  print(' '*5, number)  # !!!
+                        #  print(' '*5, latex_plain)  # !!!
                         text.append(latex_plain + '\n')
                     exercise_number += 1
         # if with_solution:
@@ -238,11 +238,11 @@ def frame(text,
 \n''')
 
     if wide:
-        preamble_text.append(r"""\voffset -1. cm
-\textheight 23.4cm
-\hoffset -1.2 cm
-\textwidth 17cm
-\headheight -3. cm
+        preamble_text.append(r"""\voffset -2.2cm
+\textheight 25.4cm
+\hoffset -1.2cm
+\textwidth 17.5cm
+\headheight -3.cm
 %\footheight 1.5cm
 \oddsidemargin 3mm
 \topskip 7mm
