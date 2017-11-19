@@ -432,8 +432,17 @@ class VarExercise:
           ]\s*)?
             \s*
         ### Obligatory parameter
-          {\s* (?P<base_value>[^}]*
-                ) \s*}
+          {\s*
+              (?P<base_value>
+                  (
+                    [^}{]*
+                    \{
+                    [^}{]*
+                    \}
+                  )*
+                [^}{]*
+              )
+          \s*}
             \s*
         ### Obligatory parameter
           {\s*
