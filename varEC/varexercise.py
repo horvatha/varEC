@@ -508,10 +508,10 @@ class VarExercise:
             const['value'] = float(const['value'])
         self.make_variable_list()
         if self.is_interval():
-            self.variaton_type = "interval"
+            self.variation_type = "interval"
             self.make_possibilities()
         elif self.is_ecChoose():
-            self.variaton_type = "ecChoose"
+            self.variation_type = "ecChoose"
 
     def is_interval(self):
         """Returns with the logical value of 'there is interval(s) in the
