@@ -2,6 +2,7 @@
 
 import locale
 import time
+import datetime
 
 month_name = ['', 'január', 'február', 'március', 'április',
               'május', 'június', 'július', 'augusztus',
@@ -14,7 +15,7 @@ def get_locale_month_name(month_num, locale_name=''):
     return locale.nl_langinfo(locale.MON_1-1+month_num)
 
 
-def date_string(string):
+def date_string(string, with_weekday=True):
     """Egy 040312 kezdetű fájlból a "2004. március 12." sztringet hozza létre.
     Tipikus használata:
     date=date_string(output_file)
@@ -22,13 +23,23 @@ def date_string(string):
     assert string[:6].isdigit()
     year, month, day = string[:2], int(string[2:4]), int(string[4:6])
     assert is_date_valid(year, month, day), "must be a valid date"
-    return date_string_from_triple(year, month, day)
+    date_string = date_string_from_triple(year, month, day)
+    if with_weekday:
+        weekday_part = " ({})".format(get_weekday(2000+int(year), month, day))
+    else:
+        weekday_part = ""
+    return date_string + weekday_part
 
 
 def tomorrow_triple():
     shift = 1
     lt = time.localtime(time.time() + shift*24*3600)
     return lt.tm_year, lt.tm_mon, lt.tm_mday
+
+weekdays = "hétfő kedd szerda csütörtök péntek szombat vasárnap".split()
+def get_weekday(year, month, day):
+    dt = datetime.datetime(year, month, day)
+    return weekdays[dt.weekday()]
 
 
 def is_date_valid(year, month, day):

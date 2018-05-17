@@ -139,7 +139,22 @@ texts = dict(
         1,
         0,
         5,
-        )
+        ),
+    text_collision=TextData(r"""
+ A kezdeti sebességnagyságok $\rvert v\lvert= \interval{6}{!v=2..20}~\frac ms$,
+ $\rvert V\lvert= \interval{2}{!V=1..15}~\frac ms$,
+ a tömegek $m = \interval{2}{!m=1..5}~kg, \quad M = \interval{3}{!M=6..25}~kg$.
+ A tömegek aránya: $r=\frac Mm = \compute{r=M/m}$. Rugalmatlan ütközésnél a közös sebesség:
+ \compute[$\frac ms$]{vk=(v+r*V)/(1+r)}.
+ Rugalmas ütközésnél az előjeles sebességek (jobbra pozitív):
+ $v'=$\compute[$\frac ms$]{v2=V2+V-v} és $V'=$\compute[$\frac ms$]{V2=(2*v+(r-1)*V)/(r+1)}.
+""".splitlines(keepends=True),
+    4, 4, 0,
+    4,
+    0,
+    4,
+    )
+
 )
 
 
@@ -157,6 +172,7 @@ def test_lengths_of_list_attribute(test_case, text_name):
     for attribute_name in list_attributes:
         attr = getattr(exercise, attribute_name)
         value = getattr(text_data, attribute_name)
+        print(attribute_name, value)
         test_case.assertEqual(len(attr), value)
 
 
@@ -190,6 +206,37 @@ class TestVarExercise(unittest.TestCase):
             self.assertAlmostEqual(values.get('alpha'), alpha)
             E = 0.5*m*v*v
             self.assertAlmostEqual(values.get('E'), E)
+
+exercise_text_with_protected_variables = r"""
+ A kezdeti sebességnagyságok $\rvert v\lvert= \interval{6}{!v=2..20}~\frac ms$,
+ $\rvert V\lvert= \interval{2}{!V=1..15}~\frac ms$,
+ a tömegek $m = \interval{2}{!m=1..5}~kg, \quad M = \interval{3}{!M=6..25}~kg$.
+ A tömegek aránya: $r=\frac Mm = \compute{r=M/m}$. Rugalmatlan ütközésnél a közös sebesség:
+ \compute[$\frac ms$]{vk=(v+r*V)/(1+r)}.
+ Rugalmas ütközésnél az előjeles sebességek (jobbra pozitív):
+ $v'=$\compute[$\frac ms$]{v2=V2+V-v} és $V'=$\compute[$\frac ms$]{V2=(2*v+(r-1)*V)/(r+1)}.
+"""
+exercise_with_protected_variables = exercise = varexercise.VarExercise(exercise_text_with_protected_variables, 77, 4)
+exercise.find_control_words()
+print(exercise_with_protected_variables.protected_variables, dir(exercise_with_protected_variables))
+
+class TestFindControlWords(unittest.TestCase):
+    known_values = [
+        (exercise_text_with_protected_variables, set("v V m M".split()))
+    ]
+
+    @staticmethod
+    def get_protected_variable_set(exercise_text):
+        FAKE_CODE = 77
+        FAKE_VARIATION_NUMBER = 4
+        exercise = varexercise.VarExercise(exercise_text, FAKE_CODE, FAKE_VARIATION_NUMBER)
+        exercise.find_control_words()
+        return set(exercise.protected_variables)
+
+    def test_protected_variables(self):
+        for exercise_text, result in self.known_values:
+            self.assertEqual(self.get_protected_variable_set(exercise_text), result)
+
 
 
 if __name__ == "__main__":

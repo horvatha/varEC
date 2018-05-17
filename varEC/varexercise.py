@@ -841,7 +841,7 @@ class VarExercise:
             unit = self.unit_list[i] or ''
             name = self.variable_list[i]
             value_string = string_list[i]
-            string_list[i] = '%s = %s~%s' % (name, value_string, unit)
+            string_list[i] = '\\detokenize{%s} = %s~%s' % (name, value_string, unit)
 
         str = ',\\hspace{10pt plus 1cm} '.join(string_list)
         str = str + ';\\\\'
